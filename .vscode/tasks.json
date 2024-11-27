@@ -1,0 +1,109 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Compile Java",
+			"type": "shell",
+			"command": "C:\\Program Files\\Java\\jdk-1.8\\bin\\javac",
+			"args": [
+			"-d",
+			"E:\\Diogenes\\assinador\\runner\\target\\classes",
+			"-cp",
+            "E:\\Diogenes\\assinador\\runner\\src\\main\\signer-master\\",
+			"-sourcepath",
+			"E:\\Diogenes\\assinador\\runner\\src\\main\\java",
+			"E:\\Diogenes\\assinador\\runner\\src\\main\\java\\com\\assinador\\*.java"
+			],
+			"group": {
+			"kind": "build",
+			"isDefault": true
+			},
+			"problemMatcher": [
+			"$javac"
+			]
+			}
+
+		,
+		{
+			"label": "Compile Demoiselle Java",
+			"type": "shell",
+
+			"command": "cmd",
+			"args": [
+			"cd E:\\Diogenes\\assinador\\runner\\src\\main\\java\\signer-master && dir /s /B *.java > sources.txt  && C:\\Program Files\\Java\\jdk-1.8\\bin\\javac @sources.txt"
+			],
+
+			"group": {
+			"kind": "build",
+			"isDefault": true
+			},
+			"problemMatcher": [
+			"$javac"
+			]
+			},		
+		{
+			"label": "Run Java",
+			"type": "shell",
+			"command": "C:\\Program Files\\Java\\jdk-1.8\\bin\\java",
+			"args": [
+			"-cp",
+			"\"E:\\Diogenes\\assinador\\runner\\target\\jar\\assinador.jar;",
+			"com.assinador.App"
+			],
+			"group": {
+			"kind": "test",
+			"isDefault": true
+			}
+			},
+			{
+				"label": "Debug Java",
+				"type": "shell",
+				"command": "C:\\Program Files\\Java\\jdk-1.8\\bin\\java",
+				"args": [
+				"-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005",
+				"-cp",
+				"\"E:\\Diogenes\\assinador\\runner\\target\\jar\\assinador.jar\"",
+				"com.assinador.App"
+				],
+				"group": {
+				"kind": "test",
+				"isDefault": true
+				}
+				}			
+		,
+			{
+					"label": "Build and Package Java",
+					"type": "shell",
+					"command": "C:\\Program Files\\Java\\jdk-1.8\\bin\\javac",
+					"args": [
+					"-d",
+					"E:\\Diogenes\\assinador\\runner\\target\\classes",
+					"-cp",
+					"E:\\Diogenes\\assinador\\runner\\src\\main\\java\\com\\assinador\\App.java"
+					],
+					"group": {
+					"kind": "build",
+					"isDefault": true
+					},
+					"problemMatcher": [
+					"$javac"
+					]
+					},
+				{
+					"label": "Package JAR",
+					"type": "shell",
+					"command": "C:\\Program Files\\Java\\jdk-1.8\\bin\\jar",
+					"args": [
+					"cvf",
+					"E:\\Diogenes\\assinador\\runner\\target\\jar\\assinador.jar",
+					"-C",
+					"E:\\Diogenes\\assinador\\runner\\target\\classes",
+					"."
+					],
+					"group": {
+					"kind": "build",
+					"isDefault": true
+					}
+					}
+	]
+	}
