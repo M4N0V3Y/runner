@@ -1,0 +1,4 @@
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilProviderCATest.class
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilUserHomeProviderCATest.class
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilOnLineITIProviderCATest.class
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilOnLineSerproProviderCATest.class

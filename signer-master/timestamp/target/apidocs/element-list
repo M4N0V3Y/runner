@@ -1,0 +1,6 @@
+org.demoiselle.signer.timestamp
+org.demoiselle.signer.timestamp.configuration
+org.demoiselle.signer.timestamp.connector
+org.demoiselle.signer.timestamp.enumeration
+org.demoiselle.signer.timestamp.signer
+org.demoiselle.signer.timestamp.utils

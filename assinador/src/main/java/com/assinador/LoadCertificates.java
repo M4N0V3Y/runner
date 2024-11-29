@@ -39,7 +39,6 @@ public class LoadCertificates {
             while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
                 Certificate cert = ksMy.getCertificate(alias);
-
                 certObj.add(cert);
             }
             Certificate[] certList = certObj.toArray(Certificate[]::new);
@@ -65,13 +64,13 @@ public class LoadCertificates {
             ksMy = KeyStore.getInstance("Windows-MY");
             ksMy.load(null, null);
             System.out.println("Certificates in Windows-MY:");
-            printCertificates(ksMy);
+            //printCertificates(ksMy);
 
             // Load the Windows-ROOT keystore
             ksRoot = KeyStore.getInstance("Windows-ROOT");
             ksRoot.load(null, null);
             System.out.println("Certificates in Windows-ROOT:");
-            printCertificates(ksRoot);
+            //printCertificates(ksRoot);
 
             certNames = new ArrayList<String>();
             certList = new ArrayList<Certificate>();

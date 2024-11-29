@@ -1,9 +1,0 @@
-module com.assinador {
-    requires javafx.controls;
-    requires javafx.fxml;
-    requires policy.impl.cades;
-    requires signer.core;
-
-    opens com.assinador to javafx.fxml;
-    exports com.assinador;
-}

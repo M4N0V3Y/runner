@@ -1,0 +1,10 @@
+org.demoiselle.signer.policy.engine
+org.demoiselle.signer.policy.engine.asn1
+org.demoiselle.signer.policy.engine.asn1.etsi
+org.demoiselle.signer.policy.engine.asn1.icpb
+org.demoiselle.signer.policy.engine.asn1.icpb.v2
+org.demoiselle.signer.policy.engine.exception
+org.demoiselle.signer.policy.engine.factory
+org.demoiselle.signer.policy.engine.repository
+org.demoiselle.signer.policy.engine.util
+org.demoiselle.signer.policy.engine.xml.icpb
