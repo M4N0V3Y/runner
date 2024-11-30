@@ -1,0 +1,3 @@
+org\demoiselle\signer\policy\impl\xades\xml\XMLCheckerTest.class
+org\demoiselle\signer\policy\impl\xades\xml\XMLSignerTest.class
+org\demoiselle\signer\policy\impl\xades\xml\XMLSigner2StepsTest.class

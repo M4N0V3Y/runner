@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"org.demoiselle.signer.chain.icp.brasil.provider"},{"l":"org.demoiselle.signer.chain.icp.brasil.provider.impl"}];updateSearchResults();

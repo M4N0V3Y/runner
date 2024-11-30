@@ -1,0 +1,4 @@
+com\assinador\LoadFileNInfo.class
+com\assinador\SignatureWrapper.class
+com\assinador\App.class
+com\assinador\LoadCertificates.class

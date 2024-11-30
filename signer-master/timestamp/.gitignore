@@ -1,0 +1,9 @@
+/target
+/.project
+/.classpath
+/.settings
+/.externalToolBuilders
+/target/
+/pom.xml.releaseBackup
+*.jar
+*.class

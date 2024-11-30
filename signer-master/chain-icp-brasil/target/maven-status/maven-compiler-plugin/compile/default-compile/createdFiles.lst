@@ -1,0 +1,6 @@
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilOnLineSerproProviderCA.class
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilProviderCA.class
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilUserHomeProviderCA.class
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilProviderCAException.class
+org\demoiselle\signer\chain\icp\brasil\provider\ChainICPBrasilConfig.class
+org\demoiselle\signer\chain\icp\brasil\provider\impl\ICPBrasilOnLineITIProviderCA.class

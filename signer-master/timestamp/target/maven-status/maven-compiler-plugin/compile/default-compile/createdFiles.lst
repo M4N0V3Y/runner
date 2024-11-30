@@ -1,1 +1,15 @@
+org\demoiselle\signer\timestamp\signer\RequestSigner.class
+org\demoiselle\signer\timestamp\configuration\TimeStampConfig.class
+org\demoiselle\signer\timestamp\connector\ConnectorFactory.class
+org\demoiselle\signer\timestamp\enumeration\PKIStatus.class
+org\demoiselle\signer\timestamp\connector\Connector.class
+org\demoiselle\signer\timestamp\connector\SocketConnector.class
 org\demoiselle\signer\timestamp\connector\ConnectorFactory$1.class
+org\demoiselle\signer\timestamp\enumeration\PKIFailureInfo.class
+org\demoiselle\signer\timestamp\connector\TimeStampOperator.class
+org\demoiselle\signer\timestamp\utils\TimeStampConfig.class
+org\demoiselle\signer\timestamp\Timestamp.class
+org\demoiselle\signer\timestamp\connector\HttpConnector.class
+org\demoiselle\signer\timestamp\TimestampGeneratorImpl.class
+org\demoiselle\signer\timestamp\utils\Utils.class
+org\demoiselle\signer\timestamp\enumeration\ConnectionType.class

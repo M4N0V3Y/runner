@@ -1,0 +1,10 @@
+/target
+/.project
+/.classpath
+/.settings
+/.externalToolBuilders
+/target/
+/pom.xml.releaseBackup
+/signer_core.log
+*.jar
+*.class

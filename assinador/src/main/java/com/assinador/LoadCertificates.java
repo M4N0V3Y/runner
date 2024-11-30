@@ -1,7 +1,11 @@
 package com.assinador;
 
+import java.awt.RenderingHints.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -41,7 +45,10 @@ public class LoadCertificates {
                 Certificate cert = ksMy.getCertificate(alias);
                 certObj.add(cert);
             }
-            Certificate[] certList = certObj.toArray(Certificate[]::new);
+            // Certificate[] certList = certObj.toArray(new Certificate[]);
+
+            Certificate[] certList = (Certificate[]) certObj.toArray();
+
             signer.setCertificates(certList);
         } catch (KeyStoreException e) {
             e.printStackTrace();
@@ -49,10 +56,57 @@ public class LoadCertificates {
 
     }
 
-    public static List<Certificate> getCertificates() throws  Exception {
+    public static PrivateKey getPrivateKey(String alias, char[] pswString) {
+
+        // private static KeyStore ksMy;
+        // private static KeyStore ksRoot;
+
+        PrivateKey thisKelclKey;
+        try {
+            thisKelclKey = (PrivateKey) ksMy.getKey(alias, pswString);
+            if (thisKelclKey == null)
+                throw new KeyStoreException();
+            return thisKelclKey;
+        } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
+
+            try {
+                thisKelclKey = (PrivateKey) ksRoot.getKey(alias, pswString);
+                return thisKelclKey;
+            } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e2) {
+
+                e.printStackTrace();
+            }
+
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+    public static Certificate[] getCertificateChain(String alias) {
+
+        Certificate[] certificateChain;
+
+        try {
+            certificateChain = ksMy.getCertificateChain(alias);
+        } catch (KeyStoreException ex) {
+            try {
+                certificateChain = ksRoot.getCertificateChain(alias);
+            } catch (final KeyStoreException ex2) {
+                return null;
+            }
+
+        }
+        return certificateChain;
+
+    }
+
+    public static List<Certificate> getCertificates() throws Exception {
 
         return certList;
     }
+
     public static List<String> getCertificateNames() throws Exception {
 
         return certNames;
@@ -64,13 +118,13 @@ public class LoadCertificates {
             ksMy = KeyStore.getInstance("Windows-MY");
             ksMy.load(null, null);
             System.out.println("Certificates in Windows-MY:");
-            //printCertificates(ksMy);
+            // printCertificates(ksMy);
 
             // Load the Windows-ROOT keystore
             ksRoot = KeyStore.getInstance("Windows-ROOT");
             ksRoot.load(null, null);
             System.out.println("Certificates in Windows-ROOT:");
-            //printCertificates(ksRoot);
+            // printCertificates(ksRoot);
 
             certNames = new ArrayList<String>();
             certList = new ArrayList<Certificate>();
@@ -88,8 +142,7 @@ public class LoadCertificates {
                 Certificate cert = ksMy.getCertificate(alias);
                 certList.add(cert);
                 certNames.add(alias);
-            }            
-
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.demoiselle.signer.chain.icp.brasil.provider.impl.ICPBrasilUserHomeProviderCATest" time="0.832" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.demoiselle.signer.chain.icp.brasil.provider.impl.ICPBrasilUserHomeProviderCATest" time="0.273" tests="3" errors="0" skipped="0" failures="0">
   <properties>
-    <property name="java.specification.version" value="21"/>
+    <property name="sun.desktop" value="windows"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="java.specification.version" value="1.8"/>
     <property name="sun.cpu.isalist" value="amd64"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
     <property name="java.class.path" value="E:\Diogenes\assinador\runner\signer-master\chain-icp-brasil\target\test-classes;E:\Diogenes\assinador\runner\signer-master\chain-icp-brasil\target\classes;E:\Diogenes\assinador\runner\signer-master\core\target\signer-core-4.4.0-SNAPSHOT.jar;C:\Users\DESKTOP\.m2\repository\org\apache\logging\log4j\log4j-api\2.17.1\log4j-api-2.17.1.jar;C:\Users\DESKTOP\.m2\repository\org\apache\logging\log4j\log4j-core\2.17.1\log4j-core-2.17.1.jar;C:\Users\DESKTOP\.m2\repository\org\apache\logging\log4j\log4j-1.2-api\2.17.1\log4j-1.2-api-2.17.1.jar;C:\Users\DESKTOP\.m2\repository\com\sun\xml\bind\jaxb-core\2.3.0.1\jaxb-core-2.3.0.1.jar;C:\Users\DESKTOP\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\DESKTOP\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\DESKTOP\.m2\repository\com\sun\xml\bind\jaxb-impl\2.3.1\jaxb-impl-2.3.1.jar;C:\Users\DESKTOP\.m2\repository\org\slf4j\slf4j-log4j12\1.7.32\slf4j-log4j12-1.7.32.jar;C:\Users\DESKTOP\.m2\repository\org\slf4j\slf4j-api\1.7.32\slf4j-api-1.7.32.jar;C:\Users\DESKTOP\.m2\repository\junit\junit\4.13.1\junit-4.13.1.jar;C:\Users\DESKTOP\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\DESKTOP\.m2\repository\org\bouncycastle\bcmail-jdk15on\1.62\bcmail-jdk15on-1.62.jar;C:\Users\DESKTOP\.m2\repository\org\bouncycastle\bcprov-jdk15on\1.62\bcprov-jdk15on-1.62.jar;C:\Users\DESKTOP\.m2\repository\org\bouncycastle\bcpkix-jdk15on\1.62\bcpkix-jdk15on-1.62.jar;"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="user.variant" value=""/>
-    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
     <property name="user.timezone" value="America/Sao_Paulo"/>
+    <property name="java.vm.specification.version" value="1.8"/>
     <property name="os.name" value="Windows 10"/>
-    <property name="java.vm.specification.version" value="21"/>
-    <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
-    <property name="sun.boot.library.path" value="C:\Oracle_JDK-21\bin"/>
-    <property name="sun.java.command" value="C:\Users\DESKTOP\AppData\Local\Temp\surefire5322356573775060948\surefirebooter-20241129133110572_3.jar C:\Users\DESKTOP\AppData\Local\Temp\surefire5322356573775060948 2024-11-29T13-31-01_829-jvmRun1 surefire-20241129133110572_1tmp surefire_0-20241129133110572_2tmp"/>
-    <property name="jdk.debug" value="release"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-1.8\jre\bin"/>
+    <property name="sun.java.command" value="C:\Users\DESKTOP\AppData\Local\Temp\surefire3697183277452836857\surefirebooter-20241130132838464_3.jar C:\Users\DESKTOP\AppData\Local\Temp\surefire3697183277452836857 2024-11-30T13-28-29_620-jvmRun1 surefire-20241130132838464_1tmp surefire_0-20241130132838464_2tmp"/>
     <property name="surefire.test.class.path" value="E:\Diogenes\assinador\runner\signer-master\chain-icp-brasil\target\test-classes;E:\Diogenes\assinador\runner\signer-master\chain-icp-brasil\target\classes;E:\Diogenes\assinador\runner\signer-master\core\target\signer-core-4.4.0-SNAPSHOT.jar;C:\Users\DESKTOP\.m2\repository\org\apache\logging\log4j\log4j-api\2.17.1\log4j-api-2.17.1.jar;C:\Users\DESKTOP\.m2\repository\org\apache\logging\log4j\log4j-core\2.17.1\log4j-core-2.17.1.jar;C:\Users\DESKTOP\.m2\repository\org\apache\logging\log4j\log4j-1.2-api\2.17.1\log4j-1.2-api-2.17.1.jar;C:\Users\DESKTOP\.m2\repository\com\sun\xml\bind\jaxb-core\2.3.0.1\jaxb-core-2.3.0.1.jar;C:\Users\DESKTOP\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\DESKTOP\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\DESKTOP\.m2\repository\com\sun\xml\bind\jaxb-impl\2.3.1\jaxb-impl-2.3.1.jar;C:\Users\DESKTOP\.m2\repository\org\slf4j\slf4j-log4j12\1.7.32\slf4j-log4j12-1.7.32.jar;C:\Users\DESKTOP\.m2\repository\org\slf4j\slf4j-api\1.7.32\slf4j-api-1.7.32.jar;C:\Users\DESKTOP\.m2\repository\junit\junit\4.13.1\junit-4.13.1.jar;C:\Users\DESKTOP\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\DESKTOP\.m2\repository\org\bouncycastle\bcmail-jdk15on\1.62\bcmail-jdk15on-1.62.jar;C:\Users\DESKTOP\.m2\repository\org\bouncycastle\bcprov-jdk15on\1.62\bcprov-jdk15on-1.62.jar;C:\Users\DESKTOP\.m2\repository\org\bouncycastle\bcpkix-jdk15on\1.62\bcpkix-jdk15on-1.62.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\DESKTOP"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
-    <property name="java.version.date" value="2024-10-15"/>
-    <property name="java.home" value="C:\Oracle_JDK-21"/>
-    <property name="file.separator" value="\"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-1.8\jre"/>
     <property name="basedir" value="E:\Diogenes\assinador\runner\signer-master\chain-icp-brasil"/>
-    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="file.separator" value="\"/>
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\DESKTOP\AppData\Local\Temp\surefire5322356573775060948\surefirebooter-20241129133110572_3.jar"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="surefire.real.class.path" value="C:\Users\DESKTOP\AppData\Local\Temp\surefire3697183277452836857\surefirebooter-20241130132838464_3.jar"/>
+    <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk-1.8\jre\lib\resources.jar;C:\Program Files\Java\jdk-1.8\jre\lib\rt.jar;C:\Program Files\Java\jdk-1.8\jre\lib\jsse.jar;C:\Program Files\Java\jdk-1.8\jre\lib\jce.jar;C:\Program Files\Java\jdk-1.8\jre\lib\charsets.jar;C:\Program Files\Java\jdk-1.8\jre\lib\jfr.jar;C:\Program Files\Java\jdk-1.8\jre\classes"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="java.runtime.version" value="21.0.5+9-LTS-239"/>
+    <property name="java.runtime.version" value="1.8.0_421-b09"/>
     <property name="user.name" value="DESKTOP"/>
-    <property name="stdout.encoding" value="Cp1252"/>
     <property name="path.separator" value=";"/>
     <property name="os.version" value="10.0"/>
+    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jdk-1.8\jre\lib\endorsed"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
-    <property name="file.encoding" value="UTF-8"/>
+    <property name="file.encoding" value="Cp1252"/>
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
     <property name="localRepository" value="C:\Users\DESKTOP\.m2\repository"/>
-    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\DESKTOP\AppData\Local\Temp\"/>
-    <property name="java.version" value="21.0.5"/>
+    <property name="java.version" value="1.8.0_421"/>
     <property name="user.dir" value="E:\Diogenes\assinador\runner\signer-master\chain-icp-brasil"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
     <property name="sun.os.patch.level" value=""/>
-    <property name="native.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Oracle_JDK-21\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python39\Scripts\;C:\Python39\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\GitExtensions\;C:\Program Files (x86)\Microsoft SDKs\TypeScript\1.0\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\SafeNet\Authentication\SAC\x64;C:\Program Files\SafeNet\Authentication\SAC\x32;C:\ProgramData\chocolatey\bin;C:\Program Files\dotnet\;C:\Program Files (x86)\OpenSSL-Win32;C:\dev\vcpkg;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\PuTTY\;C:\Program Files (x86)\AMD\ATI.ACE\Core-Static;C:\Program Files\Oracle\JavaFX 2.1 Runtime;C:\Oracle_JDK-21\bin;C:\Oracle_JDK-21\lib;C:\Users\DESKTOP\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\apache-maven-3.9.9\bin;C:\Users\DESKTOP\AppData\Local\Microsoft\WindowsApps;C:\Users\DESKTOP\.dotnet\tools;C:\Users\DESKTOP\AppData\Local\GitHubDesktop\bin;C:\Users\DESKTOP\AppData\Roaming\npm;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64;C:\Users\DESKTOP\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\DESKTOP\.dotnet\tools;C:\Program Files (x86)\AnyDesk;C:\Users\DESKTOP\AppData\Local\Muse Hub\lib;C:\Users\DESKTOP\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\apache-maven-3.9.9\bin;C:\Oracle_JDK-21\bin;C:\Oracle_JDK-21\lib;;."/>
-    <property name="java.vm.info" value="mixed mode, sharing"/>
-    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-1.8\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python39\Scripts\;C:\Python39\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\GitExtensions\;C:\Program Files (x86)\Microsoft SDKs\TypeScript\1.0\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\SafeNet\Authentication\SAC\x64;C:\Program Files\SafeNet\Authentication\SAC\x32;C:\ProgramData\chocolatey\bin;C:\Program Files\dotnet\;C:\Program Files (x86)\OpenSSL-Win32;C:\dev\vcpkg;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\PuTTY\;C:\Program Files (x86)\AMD\ATI.ACE\Core-Static;C:\Program Files\Oracle\JavaFX 2.1 Runtime;C:\Oracle_JDK-21\bin;C:\Oracle_JDK-21\lib;C:\Users\DESKTOP\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\apache-maven-3.9.9\bin;C:\Users\DESKTOP\AppData\Local\Microsoft\WindowsApps;C:\Users\DESKTOP\.dotnet\tools;C:\Users\DESKTOP\AppData\Local\GitHubDesktop\bin;C:\Users\DESKTOP\AppData\Roaming\npm;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64;C:\Users\DESKTOP\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\DESKTOP\.dotnet\tools;C:\Program Files (x86)\AnyDesk;C:\Users\DESKTOP\AppData\Local\Muse Hub\lib;C:\Users\DESKTOP\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\apache-maven-3.9.9\bin;C:\Program Files\Java\jdk-1.8\bin;C:\Program Files\Java\jdk-1.8\lib;;."/>
+    <property name="java.vm.info" value="mixed mode"/>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="java.vm.version" value="21.0.5+9-LTS-239"/>
+    <property name="java.vm.version" value="25.421-b09"/>
+    <property name="java.specification.maintenance.version" value="5"/>
+    <property name="java.ext.dirs" value="C:\Program Files\Java\jdk-1.8\jre\lib\ext;C:\WINDOWS\Sun\Java\lib\ext"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
-    <property name="java.class.version" value="65.0"/>
+    <property name="java.class.version" value="52.0"/>
   </properties>
   <testcase name="constantePublica" classname="org.demoiselle.signer.chain.icp.brasil.provider.impl.ICPBrasilUserHomeProviderCATest" time="0.0"/>
-  <testcase name="obtemCertificados" classname="org.demoiselle.signer.chain.icp.brasil.provider.impl.ICPBrasilUserHomeProviderCATest" time="0.827"/>
+  <testcase name="obtemCertificados" classname="org.demoiselle.signer.chain.icp.brasil.provider.impl.ICPBrasilUserHomeProviderCATest" time="0.27"/>
   <testcase name="construtor" classname="org.demoiselle.signer.chain.icp.brasil.provider.impl.ICPBrasilUserHomeProviderCATest" time="0.0"/>
 </testsuite>

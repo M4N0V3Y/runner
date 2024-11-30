@@ -1,0 +1,9 @@
+target/
+.project
+.classpath
+.settings/
+/.externalToolBuilders
+/.DS_Store
+/pom.xml.releaseBackup
+/bin/
+*.jar
