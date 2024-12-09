@@ -67,7 +67,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.assinador.App</mainClass>
+							<mainClass>com.assinador.assinacertificado</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

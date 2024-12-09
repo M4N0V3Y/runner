@@ -6,9 +6,16 @@
     "configurations": [
         {
             "type": "java",
-            "name": "App",
+            "name": "Attach to Remote JVM",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 5005
+            },
+        {
+            "type": "java",
+            "name": "assinacertificado",
             "request": "launch",
-            "mainClass": "com.assinador.App",
+            "mainClass": "com.assinador.assinacertificado",
             "projectName": ""
         },
         {
@@ -19,23 +26,23 @@
         },
         {
             "type": "java",
-            "name": "App",
+            "name": "assinacertificado",
             "request": "launch",
-            "mainClass": "com.assinador/com.assinador.App",
+            "mainClass": "com.assinador.assinacertificado",
             "projectName": "runner"
         },
         {
             "type": "java",
             "name": "Build",
             "request": "launch",
-            "mainClass": "com.assinador.App",
+            "mainClass": "com.assinador.assinacertificado",
             "projectName": "runner",
         },
         {
             "type": "java",
-            "name": "Debug App",
+            "name": "Debug assinacertificado",
             "request": "launch",
-            "mainClass": "com.assinador/com.assinador.App",
+            "mainClass": "com.assinador.assinacertificado",
             "projectName": "runner",
             "stopOnEntry": false,
             "console": "internalConsole"

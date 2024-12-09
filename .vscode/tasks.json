@@ -2,6 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "type": "java",
+            "name": "Attach to Remote JVM",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 5005
+            },
+        {
             "label": "compile Java",
             "type": "shell",
             "command": "mvn compile",
@@ -18,7 +25,7 @@
         {
             "label": "debug Java",
             "type": "shell",
-            "command": "mvnDebug exec:java -Dexec.mainClass=com.assinador.App",
+            "command": "mvnDebug exec:java -D exec.mainClass=com.assinador.assinacertificado",
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -29,7 +36,7 @@
             "label": "export JAR",
             "type": "shell",
             "command": "mvn package",
-            "args": ["-DoutputDirectory=assinador/target/jar"],
+            "args": ["-DoutputDirectory=assinacertificado/target/jar"],
             "group": "build",
             "problemMatcher": ["$javac"],
             "detail": "This task compiles the project and packages it into a JAR file in the target/jar directory."
