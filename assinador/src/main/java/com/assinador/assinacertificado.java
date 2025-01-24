@@ -3,7 +3,9 @@ package com.assinador;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.PrivateKey;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,10 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import java.awt.Color;
 
 //import javax.swing.BorderFactory;
@@ -19,6 +25,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
@@ -32,22 +39,29 @@ import javax.swing.ScrollPaneConstants;
 public class assinacertificado extends JFrame implements ActionListener, BackEndObserver {
     private static assinacertificado frame;
     private static JLabel label;
-    private static JLabel statusBar;
     private static JComboBox<String> comboBox;
+    private static JProgressBar pbar;
     private static JButton closeButton;
     private static JButton signButton;
     private static JTextArea textArea;
     static JScrollPane sp;
     private static String[] items; // = { "Item 1", "Item 2", "Item 3" };
     // private static Certificate[] certificates;
+    @SuppressWarnings("unused")
     private static Map<String, Certificate> mapCertificates;
 
     private static String fullFilePath;
+    private static String fullFilePath2;
     private static String fullFilePathDoc;
     private static String fullFilePathSecond;
     private static LoadCertificates loadCertificates;
     private static SignatureWrapper signatureWrapper;
     private static SignDocumentFromWeb signDocumentFromWeb;
+
+    static final int MY_MINIMUM = 0;
+    static final int MY_MAXIMUM = 100;
+
+    private static PdfSigner pdfSigner;
     // private static LoadCertificates loadCertificates;
     /*
      * public static void main(String[] args) {
@@ -94,46 +108,36 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 
         localUpdate("[INFO ⚠ ] - Assinar um documento com o certificado: [" + selectedItem + " ]");
 
-        Certificate[] certificates = LoadCertificates.getCertificateChain(selectedItem);
-
-        char[] pswString = null;
-
-        PrivateKey prvKey = LoadCertificates.getPrivateKey(selectedItem, pswString);
-
-        if (certificates != null && prvKey != null) {
-            // textArea.setText(certificate.toString() + "\n");
-            localUpdate("[INFO ⚠ ] - Assinar um documento com o certificado: [" + certificates.toString() + " ]");
-
-            Certificate cert = mapCertificates.get(selectedItem);
-
-            try {
-                SignatureWrapper.SignnWithPolicy(cert, certificates, prvKey, fullFilePath); // vem do webservice - pro
-                // SignatureWrapper.SignnWithPolicy(cert, certificates, prvKey,
-                // fullFilePathDoc); // teste
-                // SignatureWrapper.SignnWithPolicy(certificate, prvKey, fullFilePathSecond); //
-                // vem do webservice -
-                // segunda
-                // assinatura
-                // SignatureWrapper.SignnWithPolicy(certificate, prvKey, fullFilePathSecond); //
-                // vem do webservice -
-                // terceira
-                // assinatura
-                // c:\temp\entrada.pdf
-                // c:\temp\entrada.pdf.p7s <-- fazer um loop para assinar 3 vezes - mesmo
-                // certificado
-                // CAdES, XADeS e PADeS --
-                // 1 arquivo
-            } catch (Exception e) {
-
-                localUpdate("[EXCEÇÃO ❌] - Erro ao tentar assinar um documento com o certificado: ["
-                        + selectedItem + " ]\n Contate o suporte");
-
-            }
-
-        } else {
-            localUpdate("[ERROR ❌] - Erro ao tentar assinar um documento com o certificado: [" + selectedItem + " ]");
-
+        try {
+            pdfSigner = new PdfSigner(frame);
+        } catch (Exception e) {
+            //
+            e.printStackTrace();
         }
+        pbar.setValue(MY_MINIMUM + 20);
+        String fileDirName = "C:\\Temp\\entrada.pdf";
+        String fileDirOutName = "C:\\Temp\\entrada.pdf.p7s";
+        // LoadFileNInfo ldFileNInfo = new LoadFileNInfo(frame);
+        try {
+            PDDocument document = PDDocument.load(new File(fileDirName));
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.save(byteArrayOutputStream);
+            pbar.setValue(MY_MINIMUM + 30);
+            byte[] fileToSign = byteArrayOutputStream.toByteArray(); // Base64.encodeBase64(byteArrayOutputStream.toByteArray());
+            byte[] signedPdf = pdfSigner.genP7s(fileToSign, selectedItem);
+            pbar.setValue(MY_MINIMUM + 60);
+
+            FileOutputStream fos = new FileOutputStream(fileDirOutName);
+            fos.write(signedPdf);
+            pbar.setValue(MY_MINIMUM + 80);
+            fos.close();
+
+            pbar.setValue(MY_MAXIMUM);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -188,8 +192,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(640, 480);
             frame.setLayout(null);
-            // setLayout(new FlowLayout());
-            // addWindowListener(this);
+
             loadCertificates = new LoadCertificates(frame);
             // LoadCertificates.load();
             items = LoadCertificates.getCertificateNames().toArray(new String[0]);
@@ -200,7 +203,6 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
             closeButton = new JButton("Retornar");
             signButton = new JButton("Assinar");
 
-            statusBar = new JLabel("Status: Pronto");
             label = new JLabel("lblAssinador");
             label.setText("Assinador");
             textArea = new JTextArea();
@@ -212,6 +214,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
             // CAdES, XADeS e PADeS --
             // 1 arquivo
             fullFilePath = "c:\\temp\\entrada.pdf";
+
+            fullFilePath2 = "c:\\temp\\entrada-assinado.pdf";
+
             fullFilePathDoc = "c:\\temp\\Entrada.doc";
             fullFilePathSecond = "c:\\temp\\entrada.pdf.p7s";
 
@@ -244,14 +249,19 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
             sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
             frame.getContentPane().add(sp);
+            // frame.add(statusBar, BorderLayout.SOUTH);
 
-            statusBar.setBounds(20, 390, 480, 30);
-            statusBar.setBorder(border);
-            statusBar.setBackground(Color.cyan);
-            statusBar.setForeground(Color.DARK_GRAY);
-            statusBar.setBorder(border);
-
-            frame.add(statusBar, BorderLayout.SOUTH);
+            // initialize Progress Bar
+            pbar = new JProgressBar();
+            pbar.setMinimum(MY_MINIMUM);
+            pbar.setMaximum(MY_MAXIMUM);
+            pbar.setBackground(Color.LIGHT_GRAY);
+            pbar.setForeground(Color.GREEN);
+            pbar.setBounds(20, 390, 480, 30);
+            pbar.setBorder(border);
+            pbar.setValue(MY_MINIMUM);
+            // add to JPanel
+            frame.add(pbar);
 
             frame.setLocationRelativeTo(null); // This line centers the frame
             frame.setVisible(true);
@@ -271,27 +281,34 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 
         String originalStr = textArea.getText();
         textArea.setText(originalStr + "\n" + status + " ] ");
-        statusBar.setText(status);
+        // statusBar.setText(status);
 
     }
 
     /**
      * backend level updates
      * 
-     * @param status
+     * @param value
      */
-    @Override
-    public void update(String status) {
+    // @Override
+    public void update_status(int value) {
 
         try {
-            String originalStr = textArea.getText();
-            textArea.setText(originalStr + "\n" + status + " ] ");
-            statusBar.setText(status);
+            pbar.setValue(value);
         } catch (Exception ex) {
 
             ex.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void update(String status) {
+        //
+        // if(pbar.getValue()<MY_MAXIMUM){
+        localUpdate(status);
+        // update_status(int value)
+        // }
     }
 
 }

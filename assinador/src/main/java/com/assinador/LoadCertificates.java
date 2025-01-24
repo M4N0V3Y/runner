@@ -55,7 +55,7 @@ public class LoadCertificates {
      * 
      * @param observer
      */
-    public void removeObserver(BackEndObserver observer) {
+    public static void removeObserver(BackEndObserver observer) {
         observers.remove(observer);
     }
 
@@ -79,7 +79,7 @@ public class LoadCertificates {
     /**
      * Constructor
      */
-    public LoadCertificates(assinacertificado observer) {
+    LoadCertificates(assinacertificado observer) {
 
         signer = new CAdESSigner();
         observers = new ArrayList<>();

@@ -42,6 +42,7 @@ public class SignatureWrapper {
 
     private static List<BackEndObserver> observers;
     private static String status;
+    private static String _certName;
     private static assinacertificado _observer;
     private static Certificate[] _certificateChain;
     private static PrivateKey _prvKey;
@@ -66,7 +67,7 @@ public class SignatureWrapper {
      * 
      * @param observer
      */
-    public void removeObserver(BackEndObserver observer) {
+    public static void removeObserver(BackEndObserver observer) {
         observers.remove(observer);
     }
 
@@ -94,7 +95,8 @@ public class SignatureWrapper {
      * @param fullFilePath
      * @throws Exception
      */
-    public static void SignnWithPolicy(Certificate cert, Certificate[] certificateChain, PrivateKey prvKey,
+    public static void SignnWithPolicy(String certName, Certificate cert, Certificate[] certificateChain,
+            PrivateKey prvKey,
             String fullFilePath)
             throws Exception {
 
@@ -104,6 +106,7 @@ public class SignatureWrapper {
         PKCS7Signer reSigner = null;
 
         _certificateChain = certificateChain;
+        _certName = certName;
         _prvKey = prvKey;
 
         notifyObservers(_INIT_ROUTN_ASSINA);
@@ -123,7 +126,7 @@ public class SignatureWrapper {
 
             if (fileIsPDF(ldFileNInfo.getFileExtention())) {
                 // PAdES policy ---
-                SIGN_POLICY = PolicyFactory.Policies.AD_RA_PADES_1_2; // AD_RB_PADES_1_1; // AD_RA_PADES_1_1 AD_RB
+                SIGN_POLICY = PolicyFactory.Policies.AD_RB_PADES_1_1; // AD_RA_PADES_1_1 AD_RB
                 padSigner = new PAdESSigner(SignerAlgorithmEnum.SHA256withRSA.getAlgorithm(), SIGN_POLICY);
                 // SignerAlgorithmEnum.SHA256withRSA.getAlgorithm(), SIGN_POLICY
                 padSigner.setCertificates(_certificateChain);
@@ -174,7 +177,7 @@ public class SignatureWrapper {
                 // FileOutputStream outputStream = new FileOutputStream(fullFilePath + ".p7s");
                 // outputStream.write(signed);
                 try {
-                    doPDFSigner(content, fullFilePath + ".p7s");
+                    doPDFSigner(certName, content, fullFilePath + ".p7s");
                 } catch (Throwable e) {
 
                     e.printStackTrace();
@@ -221,33 +224,43 @@ public class SignatureWrapper {
         return fileExtention.toUpperCase().equals("P7S".toUpperCase());
     }
 
-    private static void doPDFSigner(byte[] toSign, final String signedFile) throws Throwable {
+    private static void doPDFSigner(String certName, byte[] toSign, final String signedFile) throws Throwable {
 
         FileOutputStream fos = new FileOutputStream(signedFile);
-        java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
-        byte[] hashOriginal = md.digest(toSign);
+        java.security.MessageDigest md1 = java.security.MessageDigest
+                .getInstance(DigestAlgorithmEnum.SHA_256.getAlgorithm());
+        byte[] hashOriginal = md1.digest(toSign);
         String hashOriginalToHex = org.bouncycastle.util.encoders.Hex.toHexString(hashOriginal);
         BigInteger bigId = new BigInteger(hashOriginalToHex.toUpperCase(), 16);
         PDSignature signature = new PDSignature();
         signature.setFilter(PDSignature.FILTER_ADOBE_PPKLITE);
-        signature.setSubFilter(PDSignature.SUBFILTER_ADBE_PKCS7_DETACHED);
+        signature.setSubFilter(PDSignature.SUBFILTER_ADBE_PKCS7_SHA1);
+        // signature.setSubFilter(PDSignature.SUBFILTER_ADBE_PKCS7_DETACHED);
+
         //
 
         Calendar.getInstance();
-        PDDocument original = PDDocument.load(toSign);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(toSign);
+
+        PDDocument original = PDDocument.load(inputStream);
         original.setDocumentId(bigId.longValue());
         original.addSignature(signature, new SignatureInterface() {
             public byte[] sign(InputStream contentToSign) throws IOException {
 
-                byte[] byteContentToSign = IOUtils.toByteArray(contentToSign);
+                byte[] byteContentToSign = toSign; // IOUtils.toByteArray(contentToSign);
                 try {
-                    java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256"); // SHA-512
+                    // java.security.MessageDigest md =
+                    // java.security.MessageDigest.getInstance("SHA-512"); // SHA-512
+                    java.security.MessageDigest md = java.security.MessageDigest
+                            .getInstance(DigestAlgorithmEnum.SHA_256.getAlgorithm());
                     // gera o hash do arquivo
                     // devido a uma restrição do token branco, no windws só funciona com 256
-                    if (org.demoiselle.signer.core.keystore.loader.configuration.Configuration.getInstance().getSO()
-                            .toLowerCase().indexOf("indows") > 0) {
-                        md = java.security.MessageDigest.getInstance(DigestAlgorithmEnum.SHA_256.getAlgorithm());
-                    }
+                    // if
+                    // (org.demoiselle.signer.core.keystore.loader.configuration.Configuration.getInstance().getSO()
+                    // .toLowerCase().indexOf("Windows") > 0) {
+                    // md =
+                    // java.security.MessageDigest.getInstance(DigestAlgorithmEnum.SHA_512.getAlgorithm());
+                    // }
                     byte[] hashToSign = md.digest(byteContentToSign);
                     String hashToSignHex = org.bouncycastle.util.encoders.Hex.toHexString(hashToSign);
                     System.out.println("hashPDFtoSign: " + hashToSignHex);
@@ -255,7 +268,7 @@ public class SignatureWrapper {
                     notifyObservers("ROTINA ASSINATURA:: [INFO ⚠] -HASH da assinatura : " + hashToSignHex);
 
                     // windows e NeoID
-                    // KeyStore ks = getKeyStoreTokenBySigner();
+                    KeyStore ks = getKeyStoreTokenBySigner();
 
                     // KeyStore ks = getKeyStoreToken();
 
@@ -264,7 +277,7 @@ public class SignatureWrapper {
 
                     // para timeStamp
 
-                    // KeyStore ksToTS = getKeyStoreTokenBySigner();
+                    KeyStore ksToTS = getKeyStoreTokenBySigner();
 
                     // String alias = getAlias(ks);
 
@@ -273,44 +286,20 @@ public class SignatureWrapper {
                     PAdESSigner signer = new PAdESSigner();
 
                     // cert
-                    signer.setCertificates(_certificateChain);
-                    signer.setCertificatesForTimeStamp(_certificateChain);
-                    signer.setPrivateKey(_prvKey);
-                    signer.setPrivateKeyForTimeStamp(_prvKey);
+
+                    // signer.setCertificates(_certificateChain);
+                    // signer.setCertificatesForTimeStamp(_certificateChain);
+                    // signer.setPrivateKey(_prvKey);
+                    char[] spK = _prvKey.toString().toCharArray();
+                    signer.setPrivateKey((PrivateKey) ks.getKey(certName, spK));
+                    signer.setPrivateKeyForTimeStamp((PrivateKey) ksToTS.getKey(certName, null));
+                    // signer.setPrivateKeyForTimeStamp(_prvKey);
                     signer.setSignaturePolicy(PolicyFactory.Policies.AD_RB_PADES_1_1);
                     signer.setAlgorithm(SignerAlgorithmEnum.SHA256withRSA.getAlgorithm());
-                    // signer.setCertificatesForTimeStamp(_certificateChain);
-                    // signer.setCertificatesForTimeStamp(_certificateChain);
-                    // signer.setPrivateKey(_prvKey);
+                    signer.setCertificates(ks.getCertificateChain(certName));
+                    signer.setCertificatesForTimeStamp(ksToTS.getCertificateChain(certName));
 
-                    // signer.setCertificates(ks.getCertificateChain(alias));
-                    // signer.setCertificatesForTimeStamp(ksToTS.getCertificateChain(aliasTS));
-
-                    // para token
-                    // signer.setPrivateKey((PrivateKey) ks.getKey(alias, null));
-                    // signer.setPrivateKey(_prvKey);
-                    // para arquivo
-                    // char[] senhaArquivo = "teste".toCharArray();
-                    // signer.setPrivateKey((PrivateKey) ks.getKey(alias, senhaArquivo));
-
-                    // signer.setSignaturePolicy(PolicyFactory.Policies.AD_RB_PADES_1_1);
-                    // com carimbo de tempo
-
-                    // signer.setPrivateKeyForTimeStamp((PrivateKey) ksToTS.getKey(aliasTS, null));
-                    // signer.setPrivateKeyForTimeStamp(_prvKey);
-                    // signer.setSignaturePolicy(PolicyFactory.Policies.AD_RT_CADES_2_3);
-
-                    // signer.setSignaturePolicy(PolicyFactory.Policies.AD_RB_CADES_2_3);
-                    // signer.setSignaturePolicy(PolicyFactory.Policies.AD_RB_PADES_1_1);
                     notifyObservers("ROTINA ASSINATURA:: [INFO ⚠] -política de assinatura : PaDES ");
-                    // para mudar o algoritimo conforme o sistema operacional
-                    // devido a uma restrição do token branco, no windows só funciona com 256
-                    // signer.setAlgorithm(SignerAlgorithmEnum.SHA512withRSA);
-                    // if
-                    // (org.demoiselle.signer.core.keystore.loader.configuration.Configuration.getInstance().getSO()
-                    // .toLowerCase().indexOf("windows") > 0) {
-                    // signer.setAlgorithm(SignerAlgorithmEnum.SHA256withRSA);
-                    // }
 
                     byte[] assinatura = signer.doHashSign(hashToSign);
 
@@ -348,7 +337,7 @@ public class SignatureWrapper {
      * token.
      */
     @SuppressWarnings("restriction")
-    private KeyStore getKeyStoreToken() {
+    private static KeyStore getKeyStoreToken() {
 
         try {
             // ATENÇÃO ALTERAR CONFIGURAÇÃO ABAIXO CONFORME O TOKEN USADO

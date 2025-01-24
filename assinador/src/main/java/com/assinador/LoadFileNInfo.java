@@ -1,10 +1,17 @@
 package com.assinador;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+//import java.util.Base64;
 import java.util.List;
+import org.apache.commons.codec.binary.Base64;
 
 public class LoadFileNInfo {
 
@@ -38,7 +45,11 @@ public class LoadFileNInfo {
 
     private static void loadFile() throws IOException {
 
-        fileContent = Files.readAllBytes(Paths.get(filePath));
+        // ...
+        byte[] fc = Files.readAllBytes(Paths.get(filePath));
+        String str = new String(fc, StandardCharsets.UTF_8);
+        fileContent = str.getBytes(StandardCharsets.UTF_8);
+
     }
 
     public void setFileInfoAndContent(String fullFilePath) throws Exception {
