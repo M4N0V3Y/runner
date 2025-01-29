@@ -1,11 +1,12 @@
-com\assinador\BackEndObserver.class
 com\assinador\PDFSignerTwoStepsTest$1.class
-com\assinador\LoadCertificates.class
 com\assinador\LoadFileNInfo.class
 com\assinador\SignatureWrapper.class
-com\assinador\assinacertificado.class
 com\RunnerUtils.class
+com\assinador\PdfWs.class
 com\assinador\PdfSigner.class
+com\assinador\BackEndObserver.class
+com\assinador\LoadCertificates.class
+com\assinador\assinacertificado.class
 com\assinador\SignatureWrapper$1.class
 com\assinador\PDFSignerTwoStepsTest.class
 com\assinador\SignDocumentFromWeb.class
