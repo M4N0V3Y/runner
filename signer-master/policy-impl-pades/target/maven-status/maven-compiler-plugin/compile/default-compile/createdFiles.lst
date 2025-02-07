@@ -1,7 +1,0 @@
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PAdESChecker.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\PKCS7Checker.class
-org\demoiselle\signer\policy\impl\pades\TimeStampPAdESSigner.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PAdESSigner.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PAdESTimeStampSigner.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\PCKS7Signer.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\PKCS7TimeStampSigner.class

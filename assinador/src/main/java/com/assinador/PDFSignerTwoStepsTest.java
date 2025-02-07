@@ -138,7 +138,7 @@ public class PDFSignerTwoStepsTest {
             } catch (Throwable e) {
                 e.printStackTrace();
                 notifyObservers(
-                        "ROTINA ASSINATURA:: [EXCEÇÃO ❌] -Ocorreu uma exceção ao tentar assinar o arquivo usando" +
+                        "ROTINA ASSINATURA:: [EXCEÇÃO X] -Ocorreu uma exceção ao tentar assinar o arquivo usando" +
                                 "a política de assinatura : PaDES ");
                 document.close();
             }
@@ -148,7 +148,7 @@ public class PDFSignerTwoStepsTest {
         } catch (IOException e) {
             e.printStackTrace();
             notifyObservers(
-                    "ROTINA ASSINATURA:: [EXCEÇÃO ❌] -Ocorreu uma exceção ao tentar assinar o" +
+                    "ROTINA ASSINATURA:: [EXCEÇÃO X] -Ocorreu uma exceção ao tentar assinar o" +
                             "aequivo usando a política de assinatura : PaDES ");
         }
 
@@ -217,7 +217,7 @@ public class PDFSignerTwoStepsTest {
                 } catch (Throwable error) {
                     error.printStackTrace();
                     notifyObservers(
-                            "ROTINA ASSINATURA:: [EXCEÇÃO ❌] -Ocorreu uma exceção ao tentar assinar o" +
+                            "ROTINA ASSINATURA:: [EXCEÇÃO X] -Ocorreu uma exceção ao tentar assinar o" +
                                     "aequivo usando a política de assinatura : PaDES , certificado: "
                                     + certificateAlias);
                     return null;

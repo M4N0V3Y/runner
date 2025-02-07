@@ -169,9 +169,9 @@ public class PdfSigner {
                     "ROTINA ASSINATURA:: [INFO ⚠] -Arquivo P7S gerado com sucesso!");
 
         } catch (Exception e) {
-            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEÇÃO ❌] -Arquivo P7S não foi gerado.");
+            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEÇÃO X] -Arquivo P7S não foi gerado.");
             notifyObservers(
-                    "ROTINA ASSINATURA:: [EXCEÇÃO ❌] -Arquivo P7S não foi gerado");
+                    "ROTINA ASSINATURA:: [EXCEÇÃO X] -Arquivo P7S não foi gerado");
             throw new Exception("genP7s: " + e.getMessage());
 
         }

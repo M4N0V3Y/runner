@@ -39,9 +39,9 @@ public class LoadCertificates {
     private static String _LOAD_CERT_OK = "CARREGA CERTIFICADOS:: [INFO ✅] - Obteve os certificados com sucesso";
     private static String _LOAD_CERT_INIT = "CARREGA CERTIFICADOS:: [INFO ⚠] - Iniciando o processo de carregamento dos Cetificados";
     private static String _LOAD_CERT_DONE_OK = "CARREGA CERTIFICADOS:: [INFO ✅] - Cetificados carregados";
-    private static String _LOAD_CERT_DONE_FAIL = "CARREGA CERTIFICADO:: [INFO ❌] - Falha ao carregar os certificados";
-    private static String _LOAD_CERT_PK_ERR = "CARREGA CERTIFICADOS:: [ERRO ❌] - Falha ao obter a  chave primária do certificado";
-    private static String _LOAD_CERT_ERR = "CARREGA CERTIFICADOS:: [ERRO ❌] - Falha ao obter os certificados";
+    private static String _LOAD_CERT_DONE_FAIL = "CARREGA CERTIFICADO:: [INFO X] - Falha ao carregar os certificados";
+    private static String _LOAD_CERT_PK_ERR = "CARREGA CERTIFICADOS:: [ERRO X] - Falha ao obter a  chave primária do certificado";
+    private static String _LOAD_CERT_ERR = "CARREGA CERTIFICADOS:: [ERRO X] - Falha ao obter os certificados";
 
     /**
      * 

@@ -1,6 +1,0 @@
-org\demoiselle\signer\policy\impl\cades\pkcs7\impl\CAdESTimeStampSignerTest.class
-org\demoiselle\signer\policy\impl\cades\pkcs7\impl\CAdESSignerTest.class
-org\demoiselle\signer\policy\impl\cades\pkcs7\impl\CAdESSignerTwoFaseTest.class
-org\demoiselle\signer\policy\impl\cades\pkcs1\impl\PKCS1CheckTest.class
-org\demoiselle\signer\policy\impl\cades\pkcs7\impl\CAdESCheckerTest.class
-org\demoiselle\signer\policy\impl\cades\pkcs1\impl\PKCS1SignerTest.class

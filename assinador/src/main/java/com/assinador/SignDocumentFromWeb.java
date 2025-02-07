@@ -131,7 +131,7 @@ public class SignDocumentFromWeb {
 
         } catch (Exception ex) {
             notifyObservers(
-                    "ROTINA ASSINATURA:: [ERRO ❌] - Ocorreu um erro ao tentar assinar documentos(s) com a chave de acesso [ "
+                    "ROTINA ASSINATURA:: [ERRO X ] - Ocorreu um erro ao tentar assinar documentos(s) com a chave de acesso [ "
                             + _accessKey + " ]");
             if (allMandatory == false)
                 throw ex;

@@ -22,7 +22,7 @@
             "group": "build",
             "problemMatcher": ["$javac"]
         },
-        {
+/*         {
             "label": "debug Java",
             "type": "shell",
             "command": "mvnDebug exec:java -D exec.mainClass=com.assinador.assinacertificado",
@@ -31,7 +31,24 @@
                 "isDefault": true
             },
             "problemMatcher": ["$javac"]
-        },
+        } */
+        {
+            "label": "debug Java",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:5005",
+                "-jar",
+                "E:\\Diogenes\\assinador\\runner\\assinador\\target\\assinacertificado-1.0-SNAPSHOT-jar-with-dependencies.jar",
+                "assinacertificado:82063756;17345678,1;33456789,2;5865904,2;9563289,2;3759403#http://wcfservice.assina.net.br/arquivo.svc#2160#26/11/2024_14:18:01#AN#3#http://wcfapi.assina.net.br#S;15/08/2020###"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": ["$javac"]
+        }
+        ,
         {
             "label": "export JAR",
             "type": "shell",

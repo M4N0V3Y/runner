@@ -52,14 +52,17 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	private static String fullFilePathDoc;
 	private static String fullFilePathSecond;
 	private static LoadCertificates loadCertificates;
-	private static SignatureWrapper signatureWrapper;
+	// private static SignatureWrapper signatureWrapper;
 	private static SignDocumentFromWeb signDocumentFromWeb;
+	private static VersionInfo versionInfo;
 
 	static final int MY_MINIMUM = 0;
 	static final int MY_MAXIMUM = 100;
 	static int countNaoAssinado;
 
 	private static PdfSigner pdfSigner;
+
+	private static String _version;
 	private static String idsToSign;
 	private static String servidor;
 	private static String chave;
@@ -71,6 +74,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	private static String cpf_cnpj;
 	private static String chave_documento;
 	private static Logger logger;
+	private static String _GETDOC_SIGN_PSW = "@$$in@.n&t";
 
 	/*
 		*/
@@ -154,8 +158,19 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		// Set the default encoding to UTF-8 - Force pt_BR to show correct Brazilian
 		// Portuguese charset
 		System.setProperty("file.encoding", "UTF-8");
+		versionInfo = new VersionInfo();
 		countNaoAssinado = 0;
+		// *
+		// USE ALWAYS YOU NEED TO DEBUG
+		// START - Only for debug - remove it
+		args = new String[2];
+		args[0] = "assinacertificado:78286811#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#06/02/2025_19:56:43#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
+		// END - Only for debug - remove it
+		// */
 		logger = Logger.getInstance();
+
+		_version = VersionInfo.getVersion();
+
 		try {
 			// Não pode ser usado antes de inicializar os componentes do Frame
 			// localUpdate("Argumentos");
@@ -178,14 +193,15 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 				logger.log("Iid(s) do(s) Arquivo: " + idsToSign);
 				servidor = arguments[1];
 				logger.log("Servidor:             " + servidor);
-				chave = arguments[2];
-				logger.log("Chave:               " + chave);
+
 				data_hora = arguments[3]; // 30/11/2024_16:53:16#
 				logger.log("Data e hora do Servidor: " + data_hora);
 				normal_zipado = arguments[4]; // # (AN) normal ou (AZ) zipado.
 				versao_assinador = arguments[5]; //// 6º parâmetro # versão para o assinador. (0) VERSÃO 1 # (2) VERSÃO
 													//// 2 #
 													//// (3) VERSÃO 2020
+				chave = arguments[2] + "#" + versao_assinador;
+				logger.log("Chave:               " + chave);
 				api_assinador = arguments[6]; // API do assinador
 				parametro_atualizcao = arguments[7]; // Parâmetro de atualização
 				cpf_cnpj = arguments[8];// CPF ou CPNJ de quem está assinando
@@ -219,8 +235,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			comboBox.addActionListener(frame);
 			closeButton.addActionListener(frame);
 			signButton.addActionListener(frame);
-			signatureWrapper = new SignatureWrapper(frame);
-			signDocumentFromWeb = new SignDocumentFromWeb(frame, args[0]);
+			// signatureWrapper = new SignatureWrapper(frame);
+			// signDocumentFromWeb = new SignDocumentFromWeb(frame, args[0]);
 			localUpdate("Assinador está em execução");
 
 		} catch (Exception e) {
@@ -348,6 +364,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			localUpdate(log_msg);
 
 			PdfWs ws = new PdfWs(frame, servidor, chave);
+			log_msg = "[Info ⚠ ] - Componente WCF API - Inicializado";
+			localUpdate(log_msg);
+
 			List<String> idDocsNotSigned = new ArrayList<String>();
 			int size = idsToSign.split(";").length;
 			int count = 1;
@@ -383,9 +402,27 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 						localUpdate(" [Info ⚠] -  Não occorreu nenum erro crítico.");
 						byte[] pdf = { 0x00 };
 						try {
-							localUpdate("Buscando arquivo no servidor: Id do arquivo" + idsToSign + "Servidor: "
+
+							String documentoAssinar = ws.getDocumentoAssinar(_GETDOC_SIGN_PSW, Integer.parseInt(id),
+									chave);
+
+							// String documentoAssinar = ws.getDocumentoAssinar(_GETDOC_SIGN_PSW, id + "#" +
+							// _version,
+							// chave);
+
+							if (documentoAssinar.contains("Erro")) {
+								localUpdate("[ Erro ] - Documento(s) para assinar: [ " + documentoAssinar
+										+ " ] não encontrado(s) no servidor: "
+										+ servidor + " com a chave: " + chave);
+							}
+
+							localUpdate("Documento(s) para assinar: [ " + documentoAssinar + " ] lido(s) no servidor: "
+									+ servidor + " com a chave: " + chave);
+
+							localUpdate("Buscando arquivo no servidor: Id do arquivo " + id + "Servidor: "
 									+ servidor + "Chave: " + chave);
-							pdf = ws.getPdfBytes(id);
+
+							pdf = ws.getPdfBytes(id, chave);
 
 							localUpdate("Arquivo Id [ " + idsToSign + " ] lido no servidor: "
 									+ servidor + " com a chave: " + chave);
@@ -393,9 +430,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 
 						} catch (Exception e) {
 							pdf = "0x00".getBytes();
-							localUpdate("[EXCEÇÃO ❌] Arquivo " + id + " não disponível");
+							localUpdate("[EXCEÇÃO X] Arquivo " + id + " não disponível");
 
-							// logger.log("[EXCEÇÃO ❌] Arquivo " + id + " não disponível");
+							// logger.log("[EXCEÇÃO X] Arquivo " + id + " não disponível");
 							for (StackTraceElement trace : e.getStackTrace()) {
 								logger.log(" [ " + trace.getFileName() + "::" + trace.getMethodName() + "  ("
 										+ trace.getLineNumber() + ") ]  -  " + trace.toString());
@@ -443,12 +480,12 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 								signedPdf = fileToSign;
 
 								try {
-									sRetorno = ws.sendSignedPdf(id, signedPdf).trim();
+									sRetorno = ws.sendSignedPdf(id, signedPdf, chave).trim();
 									localUpdate("Documento assinado (" + id + ") enviado para o servidor. ");
 									localUpdate("Documento assinado (" + id + ") enviado para o servidor. ");
 								} catch (Exception e) {
 									// throw new RuntimeException("#");
-									localUpdate("[ EXCEÇÃO ❌ ] - Documento assinado (" + id
+									localUpdate("[ EXCEÇÃO X ] - Documento assinado (" + id
 											+ ") não foi enviado para o servidor. ");
 									for (StackTraceElement trace : e.getStackTrace()) {
 										logger.log(" [ " + trace.getFileName() + "::" + trace.getMethodName() + "  ("
@@ -558,7 +595,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 						}
 
 						if (iErroCritico == 0) {
-							byte[] pdf = ws.getPdfBytes(id);
+							byte[] pdf = ws.getPdfBytes(id, chave);
 
 							if (pdf.length <= 200) {
 								// pode ser erro ou o documento est� sendo assinado por outra pessoa.
@@ -572,7 +609,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 									}
 
 									try {
-										sRetorno = ws.sendSignedPdf(id, signedPdf).trim();
+										sRetorno = ws.sendSignedPdf(id, signedPdf, chave).trim();
 									} catch (Exception e) {
 										throw new RuntimeException("sendSignedPdf:" + e.getMessage().toLowerCase());
 									}
@@ -673,8 +710,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		} catch (Exception e) {
 			//
 			localUpdate(
-					"[Exceção ❌ ] - Ocorreu uma exceção ao tentar iniciar o componente assinador do(s) documentos");
-			// logger.log("[Exceção ❌ ] - Ocorreu uma exceção ao tentar iniciar o componente
+					"[Exceção X ] - Ocorreu uma exceção ao tentar iniciar o componente assinador do(s) documentos");
+			// logger.log("[Exceção X ] - Ocorreu uma exceção ao tentar iniciar o componente
 			// assinador do(s) documentos");
 			for (StackTraceElement trace : e.getStackTrace()) {
 				logger.log(" [ " + trace.getFileName() + "::" + trace.getMethodName() + "  ("

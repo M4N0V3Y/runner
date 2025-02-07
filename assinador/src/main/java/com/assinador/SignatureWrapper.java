@@ -51,7 +51,7 @@ public class SignatureWrapper {
     private static String _ROUTN_ASSINA_DOC_NM = "ROTINA ASSINATURA:: [INFO ⚠] - Assinando o(s) documentos(s):  [   %s   ]";
     private static String _INIT_ROUTN_ASSINA = "ROTINA ASSINATURA:: [INFO ⚠] - Iniciando a assinatura do(s) documentos(s)";
     private static String _ROTINA_ASSINA_SUCCESS = "ROTINA ASSINATURA:: [INFO ✅] - Documentos(s) assinado(s) com sucesso";
-    private static String _ROTINA_ASSINA_FAIL = "ROTINA ASSINATURA:: [ERRO ❌] - Falha ao tentar assinar o(s) documentos(s)";
+    private static String _ROTINA_ASSINA_FAIL = "ROTINA ASSINATURA:: [ERRO X] - Falha ao tentar assinar o(s) documentos(s)";
     private static String _ROTINA_ASSINA_XML = "ROTINA ASSINATURA:: [INFO ⚠] - Assinando documento XML";
     private static String _ROTINA_ASSINA_PDF = "ROTINA ASSINATURA:: [INFO ⚠] - Assinando documento PDF";
 

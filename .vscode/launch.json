@@ -38,7 +38,7 @@
             "mainClass": "com.assinador.assinacertificado",
             "projectName": "runner",
         },
-        {
+        /*{
             "type": "java",
             "name": "Debug assinacertificado",
             "request": "launch",
@@ -46,6 +46,17 @@
             "projectName": "runner",
             "stopOnEntry": false,
             "console": "internalConsole"
+        }*/
+        {
+            "type": "java",
+            "name": "Debug assinacertificado",
+            "request": "launch",
+            "mainClass": "com.assinador.assinacertificado",
+            "projectName": "runner",
+            "stopOnEntry": false,
+            "console": "internalConsole",
+            "vmArgs": "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:5005 -jar 'assinacertificado:82063756;17345678,1;33456789,2;5865904,2;9563289,2;3759403#http://wcfservice.assina.net.br/arquivo.svc#2160#26/11/2024_14:18:01#AN#3#http://wcfapi.assina.net.br#S;15/08/2020###'"
         }
+        
     ]
 }

@@ -1,6 +1,0 @@
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PDFtoHex.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PDFSignerTest.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PDFSignerTwoStepsTest.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PDFSignerTest$1.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PDFVerifyTest.class
-org\demoiselle\signer\policy\impl\pades\pkcs7\impl\PDFSignerTwoStepsTest$1.class
