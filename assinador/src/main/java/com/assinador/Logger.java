@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
+    //
     private static Logger instance;
     private BufferedWriter writer;
     private static final String LOG_DIR = "C:\\temp\\";

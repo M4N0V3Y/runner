@@ -19,10 +19,12 @@ E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadTermoAd
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadTermoAditivoContratoResponse.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\AssinaCertificadoAPIClienteB.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadContratoNovo.java
+E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\VersionInfo.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\SignDocumentFromWeb.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\SetDocumento.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\SignatureWrapper.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadCNAB.java
+E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\DocumentData.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadContratoNovoResponse.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\ObjectFactory.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\RetornoNFEINF.java
@@ -40,6 +42,7 @@ E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\PDFSignerTwoS
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadCadastroResponse.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\GetComunicacao.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadTermoAditivoResponse.java
+E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\PdfP7SChecker.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadCNABResponse.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\PdfWs.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadNFEINFResponse.java

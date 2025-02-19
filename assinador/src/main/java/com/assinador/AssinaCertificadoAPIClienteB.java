@@ -4,6 +4,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,14 +70,25 @@ public class AssinaCertificadoAPIClienteB {
      * @param chave
      * @return
      */
-    public String callSetDocumentoService(Integer codResponsavel, byte[] documentoBin, String chave) {
+    public String callSetDocumentoService(Integer codResponsavel, ByteArrayInputStream documentoBin, String chave) {
         notifyObservers(
                 "AssinaCertificadoAPIClienteB::callSetDocumentoService - [INFO ⚠] Enviando PDF  para  " + WSDL_URL +
                         "  nome do serviço " + SERVICE_NAME + ". Id do documento" + codResponsavel +
                         " chave: " + chave);
 
         //
-        String response = arquivo.getIArquivo().setDocumento(codResponsavel, documentoBin, chave);
+        String response = "";
+        // ByteArrayInputStream to byte[]
+
+        byte[] _byte2Send = new byte[documentoBin.available()];
+        try {
+            documentoBin.read(_byte2Send);
+            response = arquivo.getIArquivo().setDocumento(codResponsavel, _byte2Send, chave);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            response = "Ocorreu uma exceção ao tentar enviar o documento";
+        }
 
         return response; // arquivo.setDocumento(codResponsavel, documentoBin, chave);
     }
@@ -86,7 +99,7 @@ public class AssinaCertificadoAPIClienteB {
      * @param chave
      * @return
      */
-    public byte[] callGetDocumentoService(Integer codResponsavel, String chave) {
+    byte[] callGetDocumentoService(Integer codResponsavel, String chave) {
         notifyObservers(
                 "AssinaCertificadoAPIClienteB::callGetDocumentoService - [Info ⚠ ] Buscando PDF  do " + WSDL_URL +
                         "  nome do serviço " + SERVICE_NAME + ". Id do documento" + codResponsavel +
@@ -94,6 +107,7 @@ public class AssinaCertificadoAPIClienteB {
 
         //
         byte[] response = arquivo.getIArquivo().getDocumento(codResponsavel, chave); // getDocumento(request);
+
         return response; // arquivo.getDocumento(codResponsavel, chave);
     }
 

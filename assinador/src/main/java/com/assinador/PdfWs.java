@@ -1,5 +1,6 @@
 package com.assinador;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -98,8 +99,10 @@ public class PdfWs {
         try {
 
             notifyObservers("PdfWs::getPdfBytes - WEBSERVICE:: [INFO ⚠] buscar arquivo  " + id + "  no servidoe.");
-            byte[] result = assinaCertificadoAPICliente.callGetDocumentoService(Integer.parseInt(id), key);
-            return DatatypeConverter.printBase64Binary(result).getBytes();
+            byte[] result = assinaCertificadoAPICliente.callGetDocumentoService(Integer.parseInt(id),
+                    key);
+            return result;
+            // return DatatypeConverter.printBase64Binary(result).getBytes();
 
         } catch (Exception e) {
             notifyObservers("PdfWs::getPdfBytes - WEBSERVICE:: [EXCEÇÃO] não conseguiu buscar o  arquivo  " + id
@@ -108,7 +111,7 @@ public class PdfWs {
         }
     }
 
-    public String sendSignedPdf(final String id, final byte[] signedPdf, final String key) {
+    public String sendSignedPdf(final String id, final ByteArrayInputStream signedPdf, final String key) {
         try {
 
             notifyObservers("PdfWs::sendSignedPdf - WEBSERVICE:: [INFO ⚠] Eviar arquivo  " + id
