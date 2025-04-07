@@ -1,14 +1,11 @@
 package com.assinador;
 
-import java.awt.RenderingHints.Key;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509CertSelector;
@@ -19,17 +16,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.demoiselle.signer.core.keystore.loader.KeyStoreLoader;
-import org.demoiselle.signer.core.keystore.loader.implementation.MSKeyStoreLoader;
-import org.demoiselle.signer.policy.impl.cades.pkcs7.impl.CAdESSigner;
 
 public class LoadCertificates {
 
     private static List<BackEndObserver> observers;
     private static KeyStore ksMy;
     private static KeyStore ksRoot;
-    private static CAdESSigner signer;
-    private static KeyStoreLoader keyStoreLoader;
 
     private static List<String> certNames;
     private static List<Certificate> certList;
@@ -81,12 +73,11 @@ public class LoadCertificates {
      */
     LoadCertificates(assinacertificado observer) {
 
-        signer = new CAdESSigner();
         observers = new ArrayList<>();
         observers.add(observer);
 
         load();
-        signer.setCertificates(certList.toArray(new Certificate[0]));
+  
     }
 
     /**

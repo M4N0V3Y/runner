@@ -2,8 +2,6 @@ package com;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.codec.binary.StringUtils;
-
 public class RunnerUtils {
 
     private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
@@ -15,6 +13,21 @@ public class RunnerUtils {
         return pattern.matcher(strNum).matches();
     }
 
+    public static int divideAndRoundUp(int dividend, int divisor) {
+        if (divisor == 0) {
+            throw new ArithmeticException("Cannot divide by zero");
+        }
+
+        int quotient = dividend / divisor; // Integer division gives the whole number part
+        int remainder = dividend % divisor; // Modulo operator gives the remainder
+
+        if (remainder > 0) {
+            return quotient + 1; // If there's a remainder, round up
+        } else {
+            return quotient; // If no remainder, the quotient is the result
+        }
+    }
+    
     public static final boolean isUTF8(final byte[] pText) {
         int expectedLength = 0;
         for (int i = 0; i < pText.length; i++) {

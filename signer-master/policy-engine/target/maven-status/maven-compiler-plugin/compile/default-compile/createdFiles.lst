@@ -1,8 +1,0 @@
-org\demoiselle\signer\policy\engine\asn1\etsi\TimestampTrustCondition$1.class
-org\demoiselle\signer\policy\engine\asn1\etsi\CommonRules$1.class
-org\demoiselle\signer\policy\engine\asn1\etsi\SignerRules$1.class
-org\demoiselle\signer\policy\engine\asn1\etsi\AlgorithmConstraintSet$1.class
-org\demoiselle\signer\policy\engine\asn1\etsi\CommitmentType$1.class
-org\demoiselle\signer\policy\engine\asn1\etsi\PolicyConstraints$1.class
-org\demoiselle\signer\policy\engine\asn1\etsi\AttributeTrustCondition$1.class
-org\demoiselle\signer\policy\engine\asn1\etsi\CertificateTrustPoint$1.class

@@ -22,9 +22,9 @@ E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadContrat
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\VersionInfo.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\SignDocumentFromWeb.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\SetDocumento.java
-E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\SignatureWrapper.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadCNAB.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\DocumentData.java
+E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\PdfSignatureHelper.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadContratoNovoResponse.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\ObjectFactory.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\RetornoNFEINF.java
@@ -35,10 +35,10 @@ E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\GetComunicaca
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadTermoAditivoContrato.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\PdfSigner.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadNFEINF.java
+E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\CustomAttributeTableGenerator.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\IArquivo.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\RetornoCNAB.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\assinacertificado.java
-E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\PDFSignerTwoStepsTest.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadCadastroResponse.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\GetComunicacao.java
 E:\Diogenes\assinador\runner\assinador\src\main\java\com\assinador\UploadTermoAditivoResponse.java

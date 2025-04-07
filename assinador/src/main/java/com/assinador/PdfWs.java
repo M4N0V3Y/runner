@@ -1,17 +1,7 @@
 package com.assinador;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
-import javax.xml.bind.DatatypeConverter;
 
 public class PdfWs {
 
@@ -83,7 +73,7 @@ public class PdfWs {
         try {
             notifyObservers("PdfWs::getDocumentoAssinar - WEBSERVICE:: [INFO ⚠] buscar arquivo(s) para assinar  "
                     + codResponsavel + "  no servidoe.");
-            retorno = assinaCertificadoAPICliente.callGetDocumentoAssinarService(senha, codResponsavel, chave);
+             retorno = assinaCertificadoAPICliente.callGetDocumentoAssinarService(senha, codResponsavel, chave);
 
         } catch (Exception e) {
             notifyObservers(
@@ -111,7 +101,7 @@ public class PdfWs {
         }
     }
 
-    public String sendSignedPdf(final String id, final ByteArrayInputStream signedPdf, final String key) {
+    public String sendSignedPdf(final String id, final byte[] signedPdf, final String key) {
         try {
 
             notifyObservers("PdfWs::sendSignedPdf - WEBSERVICE:: [INFO ⚠] Eviar arquivo  " + id

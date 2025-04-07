@@ -1,15 +1,14 @@
 package com.assinador;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
-import org.apache.pdfbox.io.RandomAccessBuffer;
-import org.apache.pdfbox.pdfparser.PDFParser;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
+
+import org.apache.pdfbox.io.RandomAccessBuffer;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 
 public class PdfP7SChecker {
 
@@ -50,7 +49,7 @@ public class PdfP7SChecker {
                 parser.parse();
 
                 PDDocument document = parser.getPDDocument();
-
+                
                 document.save("C:\\temp\\lido_do_servidor.pdf");
                 document.close(); // Important: Close the document to release resources
                 return true; // If no exception, it's likely a PDF

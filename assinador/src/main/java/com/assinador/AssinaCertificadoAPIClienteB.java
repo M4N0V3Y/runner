@@ -70,7 +70,7 @@ public class AssinaCertificadoAPIClienteB {
      * @param chave
      * @return
      */
-    public String callSetDocumentoService(Integer codResponsavel, ByteArrayInputStream documentoBin, String chave) {
+    public String callSetDocumentoService(Integer codResponsavel, byte[] documentoBin, String chave) {
         notifyObservers(
                 "AssinaCertificadoAPIClienteB::callSetDocumentoService - [INFO ⚠] Enviando PDF  para  " + WSDL_URL +
                         "  nome do serviço " + SERVICE_NAME + ". Id do documento" + codResponsavel +
@@ -80,16 +80,17 @@ public class AssinaCertificadoAPIClienteB {
         String response = "";
         // ByteArrayInputStream to byte[]
 
-        byte[] _byte2Send = new byte[documentoBin.available()];
+        // byte[] _byte2Send = new byte[documentoBin.available()];
         try {
-            documentoBin.read(_byte2Send);
-            response = arquivo.getIArquivo().setDocumento(codResponsavel, _byte2Send, chave);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            // documentoBin.read(_byte2Send);
+            // response = arquivo.getIArquivo().setDocumento(codResponsavel, _byte2Send,
+            // chave);
+            response = arquivo.getIArquivo().setDocumento(codResponsavel, documentoBin, chave);
+        } catch (Exception e) {
+
             e.printStackTrace();
             response = "Ocorreu uma exceção ao tentar enviar o documento";
         }
-
         return response; // arquivo.setDocumento(codResponsavel, documentoBin, chave);
     }
 

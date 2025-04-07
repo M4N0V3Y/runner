@@ -1,28 +1,22 @@
 package com.assinador;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.AccessibleObject;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.pdfbox.io.RandomAccessBuffer;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
@@ -34,7 +28,6 @@ import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
-import java.security.cert.CertificateEncodingException;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
@@ -43,14 +36,12 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
 import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
 
-import com.ibm.wsdl.util.IOUtils;
 
 public class PdfSigner {
 
@@ -59,10 +50,6 @@ public class PdfSigner {
     private String status;
     private assinacertificado _observer;
 
-    private static final ASN1ObjectIdentifier id_aa_ets_sigPolicyHash = new ASN1ObjectIdentifier(
-            "1.2.840.113549.1.9.16.2.15");
-    private static final ASN1ObjectIdentifier id_aa_ets_commitmentType = new ASN1ObjectIdentifier(
-            "1.2.840.113549.1.9.16.6.1");
 
     private static byte[] bytepolicy = {
             0x30, 0x3b, 0x06, 0x08, 0x60, 0x4c, 0x01, 0x07, 0x01, 0x01, 0x02, 0x02, 0x30, 0x2f, 0x30,
@@ -70,66 +57,6 @@ public class PdfSigner {
             (byte) 0xa2, (byte) 0xc6, 0x28, 0x19, (byte) 0x81, 0x71, 0x6c, (byte) 0x95, (byte) 0xc7, (byte) 0x98,
             (byte) 0x99, 0x03, (byte) 0x98, 0x44, 0x52, 0x3b, 0x1c, 0x61, (byte) 0xc2, (byte) 0xc9, 0x62, 0x28,
             (byte) 0x9c, (byte) 0xda, (byte) 0xc7, (byte) 0x81, 0x1f, (byte) 0xee, (byte) 0xe2, (byte) 0x9e };
-
-    // Helper function to read all bytes from an InputStream
-    /**
-     * 
-     * @param bais
-     * @return
-     * @throws IOException
-     */
-    private static byte[] readAllBytes(ByteArrayInputStream bais) throws IOException {
-        // Important: Reset the stream to the beginning if it has already been used.
-        bais.mark(Integer.MAX_VALUE);
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        int nRead;
-        byte[] data = new byte[4];
-
-        int bookmark = 0;
-        while (bookmark != -1) {
-
-            bookmark = (nRead = bais.read(data, 0, data.length));
-
-            bos.write(data, 0, nRead);
-        }
-
-        bos.flush();
-        byte[] targetArray = bos.toByteArray();
-
-        try (RandomAccessBuffer rab = new RandomAccessBuffer(bais)) {
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024]; // Or adjust buffer size as needed
-            int bytesRead;
-
-            while ((bytesRead = rab.read(buffer)) != -1) {
-                baos.write(buffer, 0, bytesRead);
-            }
-
-            return baos.toByteArray();
-
-        } catch (Exception ex) {
-            return null;
-        }
-
-        /*
-         * bais.mark(Integer.MAX_VALUE); // Mark the beginning
-         * bais.reset(); // Reset to the beginning (if mark/reset is supported)
-         * 
-         * java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-         * byte[] buffer = new byte[bais.available()];
-         * int len = bais.available();
-         * // while ((len = bais.read(buffer)) > -1) {
-         * // baos.write(buffer, 0, len);
-         * // }
-         * len = bais.read(buffer, 0, bais.available());
-         * baos.write(buffer, 0, bais.available());
-         * 
-         * return baos.toByteArray();
-         */
-    }
 
     /**
      * 
@@ -180,88 +107,269 @@ public class PdfSigner {
             return null;
         }
     }
+    /**
+     * 
+     * @param certificate
+     * @return
+     * @throws Exception
+     */
+   /*  public static X509AttributeCertificateHolder createAttributeCertificate(X509Certificate certificate, PrivateKey privatekey) throws Exception {
+        // Generate a new key pair for the holder (you can modify this as needed)
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        //KeyPair holderKeyPair = keyGen.generateKeyPair();
 
-    @SuppressWarnings({ "rawtypes", "deprecation" })
-    public ByteArrayInputStream genP7s(final byte[] pdfToSign, final String alias) throws Exception {
+        // Derive issuer and holder information from the provided X509Certificate
+        X500Name issuerName = new JcaX509CertificateHolder(certificate).getIssuer(); // Issuer from the existing certificate
+        X500Name holderName = new JcaX509CertificateHolder(certificate).getSubject(); // Holder details from the existing certificate
 
+        // Create the AttributeCertificateHolder using the holder's details
+        AttributeCertificateHolder attributeHolder = new AttributeCertificateHolder(holderName);
+
+        // Create the AttributeCertificateIssuer using the issuer's details
+        AttributeCertificateIssuer attributeIssuer = new AttributeCertificateIssuer(issuerName);
+
+        
+        // Validity period
+        Date notBefore =certificate.getNotBefore(); // new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24); // 1 day ago
+        Date notAfter = certificate.getNotAfter(); //new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365); // 1 year ahead
+
+        // Create the attribute certificate builder
+        X509v2AttributeCertificateBuilder certBuilder = new X509v2AttributeCertificateBuilder(
+                attributeHolder,         // Holder as AttributeCertificateHolder
+                attributeIssuer,         // Issuer as AttributeCertificateIssuer
+                certificate.getSerialNumber(), // Serial Number
+                notBefore,               // Valid from
+                notAfter                 // Valid to
+        );
+
+        // Sign the certificate using the private key of the X509Certificate issuer
+        // Note: If you don't have access to the issuer's private key, you'll need a substitute
+        ContentSigner signer = new JcaContentSignerBuilder("SHA256withRSA")
+                .build(privatekey); // Replace with the private key if available
+
+        // Build and return the attribute certificate
+        return certBuilder.build(signer);
+    } */
+    
+    /**
+     * 
+     * @param pdfToSign
+     * @param alias
+     * @param originalPdf
+     * @return
+     * @throws Exception
+     */
+	/* @SuppressWarnings("rawtypes")
+    public byte[] genP7s(final byte[] pdfToSign, final String alias, byte[] originalPdf) throws Exception 
+	{
         notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo de assinatura.");
+        String testeFilename = "C:\\temp\\assinado_local_primeira_assina.p7s";        
+		Security.addProvider(new BouncyCastleProvider());
+		
+		X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
 
-        Security.addProvider(new BouncyCastleProvider());
+		CMSSignedDataGenerator signGen = new CMSSignedDataGenerator();
 
-        X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+		Store certs = new JcaCertStore(Arrays.asList(certificate));
+        X509CertificateHolder certHolder = convertToX509CertificateHolder(certificate);
+		ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA256withRSA").setProvider(
+				"SunMSCAPI").build((PrivateKey) keyStore.getKey(alias, null));
 
-        CMSSignedDataGenerator signGen = new CMSSignedDataGenerator();
+		// "BC" is the name of the BouncyCastle provider
+		signGen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
+				new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).build(
+				sha1Signer, certificate));
+        // Added -
+        //signGen.addSignerInfoGenerator(new SignerInfoGeneratorBuilder(
+        //        new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
+        //        .setSignedAttributeGenerator( new CustomAttributeTableGenerator( certificate, originalPdf))
+        //        .build(sha1Signer, certHolder));                 
+        
+        X509AttributeCertificateHolder attributeCertificateHolder = createAttributeCertificate(certificate, (PrivateKey) keyStore.getKey(alias, null));
+        signGen.addAttributeCertificate(attributeCertificateHolder);
+		signGen.addCertificates(certs);
+		
+		//--------------------------------------------------------
+		CMSTypedData msg = null;
+		//boolean bSegunda = false;
+		try 
+		{
+			CMSSignedData signedData = null;
+			try 
+			{
+				signedData = new CMSSignedData(pdfToSign);
+			}
+			catch(Exception e)
+			{
+				signedData = null;
+			}
+					
+			if (signedData != null)
+			{
+				// segunda assinatura.
+				//bSegunda = true;
+                notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo da segunda assinatura.");
+                testeFilename = "C:\\temp\\assinado_local_segunda_assina.p7s";
+				//signedData = new CMSSignedData(Base64.decode(pdfToSign));
 
-        Store certs = new JcaCertStore(Arrays.asList(certificate));
+				msg = signedData.getSignedContent();             // o pdf aparece no p7s.
+				//msg = new CMSProcessableByteArray(pdfToSign);  // erro: o pdf n�o aparece no p7s.
+					
+				try 
+				{
+					SignerInformationStore signers = signedData.getSignerInfos();
+					signGen.addSigners(signers);
+				}
+				catch(Exception e)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addSigners].");                        
+					throw new Exception("addSigners: " + e.getMessage());
+				}
+				
+				try 
+				{
+					Store storeCerts = signedData.getCertificates();
+					signGen.addCertificates(storeCerts);
+				}
+				catch(Exception ex)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCertificates].");                     
+					throw new Exception("addCertificates: " + ex.getMessage());
+				}
+				
+				try 
+				{
+					Store storeCRLs = signedData.getCRLs();
+					signGen.addCRLs(storeCRLs);
+				}
+				catch(Exception ey)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCRLs].");                      
+					throw new Exception("addCRLs: " + ey.getMessage());
+				}
+				
+				try 
+				{
+					Store storeAttrCerts = signedData.getAttributeCertificates();
+					signGen.addAttributeCertificates(storeAttrCerts);
+				}
+				catch(Exception ez)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addAttributeCertificates].");                    
+					throw new Exception("addAttributeCertificates: " + ez.getMessage());
+				}
+			}
+			else 
+			{
+				// primeira assinatura.
+				msg = new CMSProcessableByteArray(pdfToSign);
+                notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo da primeira assinatura.");
+			}
+		}
+		catch (Exception e)
+		{
+            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+			throw new Exception("genP7s: " + e.getMessage());
+		}
+		//--------------------------------------------------------
+		notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] -Arquivo P7S gerado com sucesso!.");
+		
 
-        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA256WithRSA").setProvider(
-                "SunMSCAPI").build((PrivateKey) keyStore.getKey(alias, null));
+        CMSSignedData sigData = signGen.generate(msg, true);
 
-        signGen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
-                new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).build(
-                        sha1Signer, certificate));
+        // Test
+        
+        try (FileOutputStream fos = new FileOutputStream(testeFilename)) { // File
 
-        signGen.addCertificates(certs);
+            byte[] conteudo = sigData.getEncoded();// path
+            fos.write(conteudo); // Write the entire byte array to the file
 
-        CMSTypedData msg = null;
-        notifyObservers("PdfSigner::genP7s - Iniciando a assinatura do documento.");
-        try {
-            CMSSignedData signedData = null;
-            try {
-                signedData = new CMSSignedData(pdfToSign);
-            } catch (Exception e) {
-                e.printStackTrace();
-                signedData = null;
-            }
-            notifyObservers("\nPdfSigner::genP7s - Iniciando a construção do assinador.");
-            if (signedData != null) {
-                msg = signedData.getSignedContent();
-                try {
-                    SignerInformationStore signers = signedData.getSignerInfos();
-                    signGen.addSigners(signers);
-                    Store storeCerts = signedData.getCertificates();
-                    signGen.addCertificates(storeCerts);
-                    Store storeCRLs = signedData.getCRLs();
-                    signGen.addCRLs(storeCRLs);
-                    Store storeAttrCerts = signedData.getAttributeCertificates();
-                    signGen.addAttributeCertificates(storeAttrCerts);
+        } catch (IOException e) {
 
-                } catch (Exception e) {
-                    throw new Exception("addAttributeCertificates: " + e.getMessage());
-                }
-            } else {
-
-                msg = new CMSProcessableByteArray(pdfToSign);
-            }
-            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] -Arquivo P7S gerado com sucesso!.");
-            notifyObservers(
-                    "ROTINA ASSINATURA:: [INFO ⚠] -Arquivo P7S gerado com sucesso!");
-
-        } catch (Exception e) {
-            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEÇÃO X] -Arquivo P7S não foi gerado.");
-            notifyObservers(
-                    "ROTINA ASSINATURA:: [EXCEÇÃO X] -Arquivo P7S não foi gerado");
-            throw new Exception("genP7s: " + e.getMessage());
+            e.printStackTrace(); // Or your logging mechanism
+            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo de teste P7S não foi gravado.");
 
         }
+        //        
+		
+		return sigData.getEncoded();
+	}     */
 
-        // Add PAdES policy
+    /**
+     * 
+     * @param pdfToSign
+     * @param alias
+     * @param originalPdf
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings({ "rawtypes" })
+    //genP7S_old
+    public byte[] genP7s(byte[] pdfToSign, final String alias, byte[] originalPdf) throws Exception {
+
+        notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo de assinatura.");
+        String testeFilename = "C:\\temp\\assinado_local_primeira_assina.p7s";
+		Security.addProvider(new BouncyCastleProvider());
+		
+		X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+
+		CMSSignedDataGenerator signGen = new CMSSignedDataGenerator();
+
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, null);
+
+ 		Store certs = new JcaCertStore(Arrays.asList(certificate));
+        X509CertificateHolder certHolder = convertToX509CertificateHolder(certificate);
+        ContentSigner sha1Signer = null;
+        try {
+                 sha1Signer = new JcaContentSignerBuilder("SHA256WithRSA").setProvider(
+                "BC").build(privateKey);            
+        } catch (Exception exp) {
+                if(exp.getCause()!=null)  System.out.print(exp.getCause().getMessage());
+                 System.out.print(exp.getMessage());
+                 //
+            	 sha1Signer = new JcaContentSignerBuilder("SHA256WithRSA").setProvider(
+			"SunMSCAPI").build(privateKey);
+        }
+
+      /*  try {
+            signGen.addSignerInfoGenerator(new SignerInfoGeneratorBuilder(
+                new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
+                .setSignedAttributeGenerator( new CustomAttributeTableGenerator( certificate, originalPdf))
+                .build(sha1Signer, certHolder));            
+            } catch (Exception exp) {
+                if(exp.getCause()!=null)  System.out.print(exp.getCause().getMessage());
+                 System.out.print(exp.getMessage());                
+                 signGen.addSignerInfoGenerator(new SignerInfoGeneratorBuilder(
+                    new JcaDigestCalculatorProviderBuilder().setProvider("SunMSCAPI").build())
+                    .setSignedAttributeGenerator( new CustomAttributeTableGenerator( certificate, originalPdf))
+                    .build(sha1Signer, certHolder)); 
+            }
+
+   */
+
+           // Add PAdES policy
         notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Implementar política PaDES.");
         ASN1EncodableVector signedAttrs = new ASN1EncodableVector();
-        X509CertificateHolder certHolder = convertToX509CertificateHolder(certificate);
+
 
         // Add Signature Policy Identifier attribute (2.16.76.1.7.1.1.1)
         signedAttrs.add(new Attribute(PKCSObjectIdentifiers.id_aa_ets_sigPolicyId, // id_aa_ets_sigPolicyHash,
                 new DERSet(new DERSequence(new ASN1Encodable[] {
                         new DERSet(new DEROctetString(bytepolicy)),
-                        new DERObjectIdentifier("2.16.76.1.7.1.1.1"), // OID for ICP-Brasil PAdES policy
+                        new ASN1ObjectIdentifier("2.16.76.1.7.1.1.1"), // OID for ICP-Brasil PAdES policy
                         new DERUTF8String("ICP-Brasil PAdES Policy Description") }))));
 
         // Add Signature Policy Hash attribute (1.2.840.113549.1.9.16.2.15)
-        signedAttrs.add(new Attribute(id_aa_ets_sigPolicyHash, new DERSet(new DEROctetString(bytepolicy))));
+        signedAttrs.add(new Attribute(new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.2.15"),
+                                    new DERSet(new DEROctetString(bytepolicy))));
 
         // Add Signing Certificate attribute (1.2.840.113549.1.9.16.2.12)
-        ESSCertID essCertID = new ESSCertID(certHolder.getEncoded());
+        ESSCertID essCertID = new ESSCertID(certificate.getEncoded()); //certHolder.getEncoded());
         SigningCertificate signingCertificate = new SigningCertificate(essCertID);
         signedAttrs.add(new Attribute(PKCSObjectIdentifiers.id_aa_signingCertificate, new DERSet(signingCertificate)));
 
@@ -271,65 +379,140 @@ public class PdfSigner {
                         new DERSet(new DERUTCTime(new Date()))));
         // Add Commitment Type Indication attribute (1.2.840.113549.1.9.16.2.16)
         ASN1EncodableVector commitmentTypeVector = new ASN1EncodableVector();
-        commitmentTypeVector.add(new DERObjectIdentifier("1.2.840.113549.1.9.16.6.1")); // Example OID for proof of
+        commitmentTypeVector.add(new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.6.1")); // Example OID for proof of
                                                                                         // approval
-        signedAttrs.add(new Attribute(id_aa_ets_commitmentType, new DERSet(new DERSequence(commitmentTypeVector))));
+        signedAttrs.add(new Attribute(new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.2.16"), 
+                                  new DERSet(new DERSequence(commitmentTypeVector))));
 
         signGen.addSignerInfoGenerator(new SignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
                 .setSignedAttributeGenerator(new DefaultSignedAttributeTableGenerator(new AttributeTable(signedAttrs)))
                 .build(sha1Signer, certHolder));
+             
+		//dcr
+		//ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").setProvider(
+		//		"SunMSCAPI").build((PrivateKey) keyStore.getKey(alias, null));
 
-        notifyObservers(
-                "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Implementada política ICP-Brasil PAdES para assinatura P7S");
-        notifyObservers(
-                "ROTINA ASSINATURA:: [INFO ⚠] - Implementada política ICP-Brasil PAdES para assinatura P7S");
 
-        CMSSignedData sigData = signGen.generate(msg, true);
+		//--------------------------------------------------------
+		CMSTypedData msg = null;
+		//boolean bSegunda = false;
+		try 
+		{
+			CMSSignedData signedData = null;
+			try 
+			{
+				signedData = new CMSSignedData(pdfToSign);
+			}
+			catch(Exception e)
+			{
+				signedData = null;
+			}
+			notifyObservers("\nPdfSigner::genP7s - Iniciando a construção do assinador.");		
+			if (signedData != null)
+			{
+                notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo da segunda assinatura.");
+                testeFilename = "C:\\temp\\assinado_local_segunda_assina.p7s";
+				// segunda assinatura.
+				//bSegunda = true;
 
-        return new ByteArrayInputStream(sigData.getEncoded());
+				//signedData = new CMSSignedData(Base64.decode(pdfToSign));
+                
+				msg = signedData.getSignedContent();             // o pdf aparece no p7s.
+				//msg = new CMSProcessableByteArray(pdfToSign);  // erro: o pdf n�o aparece no p7s.
+        
+				try 
+				{
+                    
+					SignerInformationStore signers = signedData.getSignerInfos();
+					signGen.addSigners(signers);
+				}
+				catch(Exception e)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addSigners].");                      
+					throw new Exception("addSigners: " + e.getMessage());
+				}
+				
+				try 
+				{
+					Store storeCerts = signedData.getCertificates();
+					signGen.addCertificates(storeCerts);
+				}
+				catch(Exception ex)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCertificates].");                         
+					throw new Exception("addCertificates: " + ex.getMessage());
+				}
+				
+				try 
+				{
+					Store storeCRLs = signedData.getCRLs();
+					signGen.addCRLs(storeCRLs);
+				}
+				catch(Exception ey)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCRLs].");                    
+					throw new Exception("addCRLs: " + ey.getMessage());
+				}
+				
+				try 
+				{
+					Store storeAttrCerts = signedData.getAttributeCertificates();
+					signGen.addAttributeCertificates(storeAttrCerts);
+				}
+				catch(Exception ez)
+				{
+                    notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+					notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addAttributeCertificates].");
+                    throw new Exception("addAttributeCertificates: " + ez.getMessage());
+				}
+			}
+			else 
+			{
+				// primeira assinatura.
+				msg = new CMSProcessableByteArray(pdfToSign);
+                notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo da primeira assinatura.");
+			}
+		}
+		catch (Exception e)
+		{
+            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+			throw new Exception("genP7s: " + e.getMessage());
+		}
+		//--------------------------------------------------------
+               
+		signGen.addCertificates(certs);
+
+		notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] -Arquivo P7S gerado com sucesso!.");
+		CMSSignedData sigData = signGen.generate(msg, true);
+        // Test
+        
+        try (FileOutputStream fos = new FileOutputStream(testeFilename)) { // File
+
+            byte[] conteudo = sigData.getEncoded();// path
+            fos.write(conteudo); // Write the entire byte array to the file
+
+        } catch (IOException e) {
+
+            e.printStackTrace(); // Or your logging mechanism
+            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo de teste P7S não foi gravado.");
+
+        }
+        //
+                		
+		return sigData.getEncoded();
+
     }
-
+    /**
+     * 
+     * @return
+     * @throws KeyStoreException
+     */
     public String[] keyAliases() throws KeyStoreException {
         return Collections.list(keyStore.aliases()).toArray(new String[] {});
     }
 
-    public ByteArrayInputStream signP7s(byte[] inputStream, String certAlias) {
-        // ByteArrayInputStream fileToSign = new ByteArrayInputStream(inputStream);
-        try {
-            Security.addProvider(new BouncyCastleProvider());
-
-            X509Certificate certificate = (X509Certificate) keyStore.getCertificate(certAlias);
-            PrivateKey privateKey = (PrivateKey) keyStore.getKey(certAlias, null); // Get private key
-
-            if (certificate == null || privateKey == null) {
-                notifyObservers("PdfSigner::signP7s - Certificate or private key not found for alias: " + certAlias);
-                return null; // Or throw an exception
-            }
-
-            CMSSignedDataGenerator signGen = new CMSSignedDataGenerator();
-
-            Store certs = new JcaCertStore(Arrays.asList(certificate));
-
-            ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA256WithRSA").setProvider("SunMSCAPI")
-                    .build(privateKey); // Use retrieved private key
-
-            signGen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
-                    new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).build(
-                            sha1Signer, certificate));
-
-            signGen.addCertificates(certs);
-
-            CMSTypedData msg = new CMSProcessableByteArray(inputStream); // Use fileToSign directly
-
-            CMSSignedData sigData = signGen.generate(msg, true); // true for encapsulated content
-
-            return new ByteArrayInputStream(sigData.getEncoded()); // .getEncoded();
-
-        } catch (Exception e) {
-            notifyObservers("PdfSigner::signP7s - Error signing P7S: " + e.getMessage());
-            e.printStackTrace(); // Or your logging mechanism
-            return null; // Or throw an exception
-        }
-    }
 }
