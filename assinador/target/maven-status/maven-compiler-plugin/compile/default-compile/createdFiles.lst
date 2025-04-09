@@ -3,7 +3,6 @@ com\assinador\MemoryStream.class
 com\assinador\GetDocumento.class
 com\assinador\MarshalByRefObject.class
 com\assinador\UploadContratoNovoResponse.class
-com\assinador\LoadFileNInfo.class
 com\assinador\package-info.class
 com\assinador\ObjectFactory.class
 com\assinador\GetComunicacao.class
@@ -45,6 +44,5 @@ com\assinador\SetDocumentoResponse.class
 com\assinador\BackEndObserver.class
 com\assinador\Stream.class
 com\assinador\UploadCNAB.class
-com\assinador\PdfSignatureHelper.class
 com\assinador\RetornoCNAB.class
 com\assinador\SignDocumentFromWeb.class

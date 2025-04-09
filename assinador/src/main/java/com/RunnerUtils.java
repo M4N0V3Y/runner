@@ -2,6 +2,8 @@ package com;
 
 import java.util.regex.Pattern;
 
+// [DCR]
+// classe  global Utils
 public class RunnerUtils {
 
     private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
@@ -27,7 +29,7 @@ public class RunnerUtils {
             return quotient; // If no remainder, the quotient is the result
         }
     }
-    
+
     public static final boolean isUTF8(final byte[] pText) {
         int expectedLength = 0;
         for (int i = 0; i < pText.length; i++) {

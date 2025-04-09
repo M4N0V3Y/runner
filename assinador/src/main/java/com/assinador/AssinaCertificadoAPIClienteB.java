@@ -16,7 +16,7 @@ public class AssinaCertificadoAPIClienteB {
     private List<BackEndObserver> observers;
     private String status;
 
-    private static final String WSDL_URL = "http://wcfassinanetsuporte.assina.net.br/Arquivo.svc?wsdl";
+    private String WSDL_URL; // = "http://wcfassinanetsuporte.assina.net.br/Arquivo.svc?wsdl";
     private static final QName SERVICE_NAME = new QName("http://tempuri.org/", "Arquivo");
     private Arquivo arquivo;
 
@@ -38,13 +38,16 @@ public class AssinaCertificadoAPIClienteB {
         }
     }
 
-    public AssinaCertificadoAPIClienteB(assinacertificado observer) throws Exception {
+    // [ DCR ]
+    // cliente das APIs de assinatura
+    public AssinaCertificadoAPIClienteB(String servidor, assinacertificado observer) throws Exception {
+        WSDL_URL = servidor + "?wsdl"; // "//Arquivo.svc?wsdl";
         observers = new ArrayList<>();
         addObserver(observer);
         _observer = observer;
         try {
-
-            arquivo = new Arquivo();
+            URL url = new URL(WSDL_URL);
+            arquivo = new Arquivo(url);
 
             notifyObservers(
                     "AssinaCertificadoAPIClienteB::AssinaCertificadoAPIClienteB - [INFO ⚠] Servidor:  "
@@ -70,6 +73,8 @@ public class AssinaCertificadoAPIClienteB {
      * @param chave
      * @return
      */
+    // [ DCR ]
+    // metodo par enviar arquivos
     public String callSetDocumentoService(Integer codResponsavel, byte[] documentoBin, String chave) {
         notifyObservers(
                 "AssinaCertificadoAPIClienteB::callSetDocumentoService - [INFO ⚠] Enviando PDF  para  " + WSDL_URL +
@@ -100,6 +105,8 @@ public class AssinaCertificadoAPIClienteB {
      * @param chave
      * @return
      */
+    // [ DCR ]
+    // metodo para trazer um documento do servidor
     byte[] callGetDocumentoService(Integer codResponsavel, String chave) {
         notifyObservers(
                 "AssinaCertificadoAPIClienteB::callGetDocumentoService - [Info ⚠ ] Buscando PDF  do " + WSDL_URL +
@@ -118,6 +125,8 @@ public class AssinaCertificadoAPIClienteB {
      * @param chave
      * @return
      */
+    // [ DCR ]
+    // método para trazer do servidor os documentos a serem assinados
     public String callGetDocumentoAssinarService(String senha, Integer codResponsavel, String chave) {
 
         notifyObservers(

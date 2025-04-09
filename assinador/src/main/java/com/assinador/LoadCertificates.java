@@ -16,7 +16,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-
+// [DCR]
+// classe responsável por trazer os certificados válidos para a caixa de combinação da tela principal
 public class LoadCertificates {
 
     private static List<BackEndObserver> observers;
@@ -77,7 +78,7 @@ public class LoadCertificates {
         observers.add(observer);
 
         load();
-  
+
     }
 
     /**

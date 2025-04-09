@@ -36,6 +36,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
         Stream.class
 })
+// [DCR]
+// classe gerada pela API do servidor (WSDL)
 public class MarshalByRefObject {
 
     @XmlElement(name = "__identity", required = true, nillable = true)

@@ -19,6 +19,8 @@ import javax.xml.ws.ResponseWrapper;
 @XmlSeeAlso({
                 ObjectFactory.class
 })
+// [ DCR ]
+// API assina certificado
 public interface IArquivo {
 
         /**
@@ -155,6 +157,9 @@ public interface IArquivo {
          * @return
          *         returns java.lang.String
          */
+        // [ DCR ]
+        // API assina certificado
+        // envia o documento assinado para o servidor
         @WebMethod(operationName = "SetDocumento", action = "http://tempuri.org/IArquivo/SetDocumento")
         @WebResult(name = "SetDocumentoResult", targetNamespace = "http://tempuri.org/")
         @RequestWrapper(localName = "SetDocumento", targetNamespace = "http://tempuri.org/", className = "com.assinador.SetDocumento")
@@ -171,6 +176,11 @@ public interface IArquivo {
          * @return
          *         returns byte[]
          */
+        // [ DCR ]
+        // API assina certificado
+        // Retorna do servidor o documento a ser assinado à partir do código do
+        // documento e da chave
+        // O código do documento é obtido pelo método getDocumentoAssinar
         @WebMethod(operationName = "GetDocumento", action = "http://tempuri.org/IArquivo/GetDocumento")
         @WebResult(name = "GetDocumentoResult", targetNamespace = "http://tempuri.org/")
         @RequestWrapper(localName = "GetDocumento", targetNamespace = "http://tempuri.org/", className = "com.assinador.GetDocumento")
@@ -188,6 +198,9 @@ public interface IArquivo {
          * @return
          *         returns java.lang.String
          */
+        // [ DCR ]
+        // API assina certificado
+        // não utilizado neste aplicativo e não pode ser removido
         @WebMethod(operationName = "UploadCadastro", action = "http://tempuri.org/IArquivo/UploadCadastro")
         @WebResult(name = "UploadCadastroResult", targetNamespace = "http://tempuri.org/")
         @RequestWrapper(localName = "UploadCadastro", targetNamespace = "http://tempuri.org/", className = "com.assinador.UploadCadastro")
@@ -206,6 +219,10 @@ public interface IArquivo {
          * @return
          *         returns java.lang.String
          */
+        // [ DCR ]
+        // API assina certificado
+        // getDocumentoAssinar tras os documentos conforme o código do responsável, a
+        // chave e a senha informados
         @WebMethod(operationName = "GetDocumentoAssinar", action = "http://tempuri.org/IArquivo/GetDocumentoAssinar")
         @WebResult(name = "GetDocumentoAssinarResult", targetNamespace = "http://tempuri.org/")
         @RequestWrapper(localName = "GetDocumentoAssinar", targetNamespace = "http://tempuri.org/", className = "com.assinador.GetDocumentoAssinar")
@@ -221,6 +238,9 @@ public interface IArquivo {
          * @return
          *         returns java.lang.String
          */
+        // [ DCR ]
+        // API assina certificado
+        // não utilizado neste aplicativo e não pode ser removido
         @WebMethod(operationName = "GetComunicacao", action = "http://tempuri.org/IArquivo/GetComunicacao")
         @WebResult(name = "GetComunicacaoResult", targetNamespace = "http://tempuri.org/")
         @RequestWrapper(localName = "GetComunicacao", targetNamespace = "http://tempuri.org/", className = "com.assinador.GetComunicacao")
@@ -234,6 +254,9 @@ public interface IArquivo {
          * @return
          *         returns java.lang.String
          */
+        // [ DCR ]
+        // API assina certificado
+        // não utilizado neste aplicativo e não pode ser removido
         @WebMethod(operationName = "UploadContratoNovo", action = "http://tempuri.org/IArquivo/UploadContratoNovo")
         @WebResult(name = "UploadContratoNovoResult", targetNamespace = "http://tempuri.org/")
         @RequestWrapper(localName = "UploadContratoNovo", targetNamespace = "http://tempuri.org/", className = "com.assinador.UploadContratoNovo")
@@ -249,6 +272,9 @@ public interface IArquivo {
          * @return
          *         returns java.lang.String
          */
+        // [ DCR ]
+        // API assina certificado
+        // não utilizado neste aplicativo (nesta versão) e não pode ser removido
         @WebMethod(operationName = "GetTesteVersao", action = "http://tempuri.org/IArquivo/GetTesteVersao")
         @WebResult(name = "GetTesteVersaoResult", targetNamespace = "http://tempuri.org/")
         @RequestWrapper(localName = "GetTesteVersao", targetNamespace = "http://tempuri.org/", className = "com.assinador.GetTesteVersao")

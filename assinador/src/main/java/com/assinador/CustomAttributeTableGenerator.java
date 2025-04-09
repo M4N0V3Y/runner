@@ -25,6 +25,17 @@ import org.bouncycastle.cms.CMSAttributeTableGenerationException;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+// [ DCR ]
+//  classe para contruir o vetor customizado de atributos da assinatura 
+//      *** candidata a ser usada para assinatura 
+//      ***     ou candidata a ser depreciada e removida do projeto
+//      - precisa ser avaliada para ver se será utlizada
+//      - não está em uso na presente versão
+//      - esta classe foi construída para implementar o padrão PADES - ICP-Brasil na assinatura    
+/**
+ * 
+ 
+ */
 public final class CustomAttributeTableGenerator implements CMSAttributeTableGenerator {
 
         private ASN1EncodableVector attributes;
@@ -81,14 +92,14 @@ public final class CustomAttributeTableGenerator implements CMSAttributeTableGen
                                 PKCSObjectIdentifiers.pkcs_9_at_contentType,
                                 new DERSet(PKCSObjectIdentifiers.data)));
 
-
                 // 3) Attribute Message Digest
-                MessageDigest messageDigest = MessageDigest.getInstance("SHA-256", (Provider)new BouncyCastleProvider());
+                MessageDigest messageDigest = MessageDigest.getInstance("SHA-256",
+                                (Provider) new BouncyCastleProvider());
                 byte[] messageDigestBytes = messageDigest.digest(dataToSign);
                 attributeVector.add(new Attribute(
                                 PKCSObjectIdentifiers.pkcs_9_at_messageDigest,
                                 new DERSet(new DEROctetString(messageDigestBytes))));
-                                
+
                 // 2) Attribute Signing Time
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss'Z'", Locale.getDefault());
                 String signingTime = dateFormat.format(new Date());
@@ -103,7 +114,8 @@ public final class CustomAttributeTableGenerator implements CMSAttributeTableGen
                 policyVector.add(new DEROctetString(bytepolicy));
 
                 // Add the policy OID
-                policyVector.add(new ASN1ObjectIdentifier("2.16.76.1.7.1.1.1")); // ICP-Brasil PAdES policy OID 2.16.76.1.7.1
+                policyVector.add(new ASN1ObjectIdentifier("2.16.76.1.7.1.1.1")); // ICP-Brasil PAdES policy OID
+                                                                                 // 2.16.76.1.7.1
 
                 // Add the hash algorithm
                 AlgorithmIdentifier hashAlgorithm = new AlgorithmIdentifier(
@@ -111,42 +123,39 @@ public final class CustomAttributeTableGenerator implements CMSAttributeTableGen
                 policyVector.add(hashAlgorithm);
 
                 // Add the policy hash again (as per the ICP-Brasil PAdES profile)
-                //policyVector.add(new DEROctetString(bytepolicy));
+                // policyVector.add(new DEROctetString(bytepolicy));
 
                 // 5. Policy OID (specific)
-                policyVector.add(new ASN1ObjectIdentifier("2.16.76.1.7.1.1.2.1")); //2.16.76.1.7.1.1.2.3
+                policyVector.add(new ASN1ObjectIdentifier("2.16.76.1.7.1.1.2.1")); // 2.16.76.1.7.1.1.2.3
 
                 // Add the policy hash again (as per the ICP-Brasil PAdES profile)
                 policyVector.add(new DEROctetString(bytepolicy));
                 // Add the hash algorithm
-                //AlgorithmIdentifier hashAlgorithm = new AlgorithmIdentifier(
-                //                new ASN1ObjectIdentifier("2.16.840.1.101.3.4.2.1")); // SHA-256 OID
+                // AlgorithmIdentifier hashAlgorithm = new AlgorithmIdentifier(
+                // new ASN1ObjectIdentifier("2.16.840.1.101.3.4.2.1")); // SHA-256 OID
                 policyVector.add(hashAlgorithm);
                 // Add the policy description (optional, but recommended)
                 policyVector.add(new DERUTF8String("ICP-Brasil PAdES Policy Description"));
-
 
                 AlgorithmIdentifier algId = new AlgorithmIdentifier(new ASN1ObjectIdentifier("2.16.840.1.101.3.4.2.1")); // SHA-256
                 byte[] certHash = MessageDigest.getInstance("SHA-256").digest(certificate.getEncoded());
                 ESSCertIDv2 essCertIDv2 = new ESSCertIDv2(algId, certHash);
                 SigningCertificateV2 signingCertificateV2 = new SigningCertificateV2(essCertIDv2);
                 // 4) PaDES
-                attributeVector.add( new Attribute(
-                        new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.2.15"),
-                       // new DERSet(new DEROctetString(bytepolicy)) ));
-                        new DERSet(new DERSequence(policyVector)) ));
+                attributeVector.add(new Attribute(
+                                new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.2.15"),
+                                // new DERSet(new DEROctetString(bytepolicy)) ));
+                                new DERSet(new DERSequence(policyVector))));
 
                 // 5) Attribute Signing Certificate V2
                 attributeVector.add(new Attribute(
                                 new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.2.47"),
                                 new DERSet(signingCertificateV2)));
-                
+
                 // 6) Attribute Document Description (optional)
                 String documentDescription = "Example Document Description";
                 attributeVector.add(new Attribute(new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.2.12"),
-                                new DERSet(new DERUTF8String(documentDescription)))); 
-
-
+                                new DERSet(new DERUTF8String(documentDescription))));
 
                 return attributeVector;
         }

@@ -48,6 +48,8 @@ import javax.xml.bind.annotation.XmlType;
         "position",
         "writable"
 })
+// [DCR]
+// classe gerada pela API do servidor (WSDL)
 public class MemoryStream
         extends Stream {
 

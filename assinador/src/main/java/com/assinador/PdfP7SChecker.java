@@ -10,6 +10,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 
+// [DCR]
+// classe responsável por verificar se os bytes do arquivo lido correspondem a 
+// um arquivo PDF ou um arquivo P7S
 public class PdfP7SChecker {
 
     public static FileType checkFileType(byte[] fileBytes) {
@@ -28,6 +31,8 @@ public class PdfP7SChecker {
         UNKNOWN
     }
 
+    // [DCR]
+    // verifica se os bytes lidos correspondem a um PDF
     public static boolean isPDF(byte[] inputFBytes) {
 
         ByteArrayInputStream fileBytes = new ByteArrayInputStream(inputFBytes);
@@ -49,7 +54,7 @@ public class PdfP7SChecker {
                 parser.parse();
 
                 PDDocument document = parser.getPDDocument();
-                
+
                 document.save("C:\\temp\\lido_do_servidor.pdf");
                 document.close(); // Important: Close the document to release resources
                 return true; // If no exception, it's likely a PDF
@@ -61,6 +66,8 @@ public class PdfP7SChecker {
 
     }
 
+    // [DCR]
+    // verifica se os bytes lidos correspondem a um arquivo P7S
     public static boolean isP7S(byte[] inputFBytes) {
 
         ByteArrayInputStream fileBytes = new ByteArrayInputStream(inputFBytes);

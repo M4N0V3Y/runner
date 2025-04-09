@@ -36,7 +36,7 @@ import org.bouncycastle.cms.CMSTypedData;
 //import javafx.scene.paint.Color;
 
 /**
- * JavaFX assinacertificado
+ * 
  */
 public class assinacertificado extends JFrame implements ActionListener, BackEndObserver {
 	private static assinacertificado frame;
@@ -64,7 +64,6 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	static int countNaoAssinado;
 
 	private static PdfSigner pdfSigner;
-	private static PdfSignatureHelper pdfSignatureHelper;
 	private static PdfWs ws;
 	private static String _version;
 	private static String idsToSign;
@@ -126,7 +125,16 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		String selectedItem = (String) comboBox.getSelectedItem();
 		// String originalStr = textArea.getText();
 		// sign all documents from Web Service
-		SignAllDocuments(idsToSign, servidor, chave, selectedItem);
+		try {
+			// [ DCR ]
+			// Executa a rotina para assinar os documentos
+			// --- selecionado o certificado, informada a chave e o id do responsável
+			//
+			SignAllDocuments(idsToSign, servidor, chave, selectedItem);
+		} catch (Exception ex) {
+			logger.log("[ EXCEÇÃO X ] Um ou mais documentos não foram assinados : " + ex.getMessage());
+
+		}
 
 	}
 
@@ -151,6 +159,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 * 
 	 * @param args
 	 */
+	// [ DCR ]
+	// PONTO DE ENTRADA DA APLICAÇÃO
+	// Aplicação Java Desktop Swing
 	public static void main(String[] args) {
 		// Set the default encoding to UTF-8 - Force pt_BR to show correct Brazilian
 		// Portuguese charset
@@ -167,17 +178,26 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		// *
 		// USE ALWAYS YOU NEED TO DEBUG
 		// START - Only for debug - remove it
-		// args = new String[2];
+
+		// [ DCR ]
+		// Este trecho usado somente quando for fazer depuração (DEBUG)
+		// * Remover antes de fazer o BUILD do arquivo JAR
+		// [ Inicio]
+		args = new String[2];
 		// PDF -
-		// args[0] =
-		// "assinacertificado:31005232#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#09/04/2025_12:26:08#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
+		// DEBUG
+		args[0] = "assinacertificado:21360571#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#09/04/2025_15:35:11#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
+		// PRODUÇÃO --- args[0] =
+		// "assinacertificado:25852136#http://wcfservice.assina.net.br/arquivo.svc#12020#09/04/2025_14:54:06#AN#3#http://wcfapi.assina.net.br#S;15/08/2020##";
 		// P7S args[0] =
 		// "assinacertificado:32661916#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#26/03/2025_17:29:05#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
 
-		// END - Only for debug - remove it
+		// [ Fim ]
 		// */
+		// [ DCR ]
+		// Inicia o Logger
 		logger = Logger.getInstance();
-
+		logger.Ativar(false);
 		_version = VersionInfo.getVersion();
 
 		try {
@@ -221,6 +241,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			}
 
 			logger.log("Id do arquivo" + idsToSign + "Servidor: " + servidor + "Chave: " + chave);
+			// [ DCR ]
+			// Inicializa os componentes da tela
 			InitComponents();
 			comboBox.addActionListener(frame);
 			closeButton.addActionListener(frame);
@@ -243,8 +265,10 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	}
 
 	/**
-	* 
-	*/
+	 * // [ DCR ]
+	 * Inicializa os controles de tela
+	 * Inicializa o serviço de assinaturas
+	 */
 	private static void InitComponents() {
 		try {
 
@@ -309,6 +333,11 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			frame.setLocationRelativeTo(null); // This line centers the frame
 			frame.setVisible(true);
 			logger.log("Interface criada e em exibição");
+			// [ DCR ]
+			// Inicializa o serviço de assinaturas
+			// classe PdfWs
+			// -----> classe AssinaCertificadoAPIClienteB
+			// ----> Arquivo [ esta é a implementação da API WSDL ]
 			ws = new PdfWs(frame, servidor, chave);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage(), "Error",
@@ -331,23 +360,21 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 */
 	@SuppressWarnings({ "unchecked", "unchecked", "unchecked", "deprecation" })
 	static void SignAllDocuments(String idsToSign, String servidor, String chave, String certAlias) {
+		// [ DCR ]
 		// -----------------------
 		// Assinar os documentos.
 		// -----------------------
+		// Instancia o assinador: class PdfSigner
+		//                        ---> [metodo ] getDocumentoAssinar - retorna os documentos selecionados para serem assinados
+ 		//
 		try {
 			closeButton.enable(false);
 			String log_msg = "";
 			log_msg = "[Info ⚠ ] - Iniciando o componente assinador do(s) documentosr";
 			localUpdate(log_msg);
-
+			// [ DCR ] - instancia o assinador
 			pdfSigner = new PdfSigner(frame);
-			pdfSignatureHelper = new PdfSignatureHelper();
-
-			// String[] id_part = idsToSign.split(":");
-
-			// String sPrefixo = id_part[0];
-			// idsToSign = id_part[1];
-
+			//
 			log_msg = "[Info ⚠ ] - Iniciando a assinatura do(s) documentosr";
 			localUpdate(log_msg);
 			log_msg = "[Info ⚠ ] - Id do arquivo" + idsToSign + "Servidor: " + servidor + "Chave: " + chave;
@@ -361,15 +388,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			List<String> idDocsNotSigned = new ArrayList<String>();
 			int size = idsToSign.split(";").length;
 
-			String sRetorno = null;
-			// ByteArrayInputStream signedPdf;
-			byte[] signedPdf;
 			String id = null;
-			int iQtdeAssina = 0;
 
-			// pbar.setValue(count);
-
-			// localUpdate("Prefixo: " + sPrefixo);
 			localUpdate("Assinate/Documento(s) : [ " + idsToSign + " ]");
 
 			for (String idNovo : idsToSign.split(";")) {
@@ -380,10 +400,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 					if (idNovo.contains(",")) {
 						String[] parts = idNovo.split(",");
 						id = parts[0];
-						iQtdeAssina = Integer.parseInt(parts[1]);
 					} else {
 						id = idNovo;
-						iQtdeAssina = 1;
+
 					}
 
 					localUpdate("Iniciando a assinatura de cada documento");
@@ -393,7 +412,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 						localUpdate(" [Info ⚠] -  Não occorreu nenum erro crítico.");
 						byte[] pdf = { 0x00 };
 						try {
-
+							// [ DCR ] 
+							// Chama GetDocumentoAssinar 
+							// retorna os documentos para serem assinados ou ERRO
 							String documentoAssinar = ws.getDocumentoAssinar(_GETDOC_SIGN_PSW, Integer.parseInt(chave),
 									id + "#" + _app_version); // + _version);
 
@@ -401,6 +422,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 								localUpdate("[ Erro ] - Documento(s) para assinar: [ " + documentoAssinar
 										+ " ] não encontrado(s) no servidor: "
 										+ servidor + " com a chave: " + chave);
+								// [ DCR ]  - caso retorne com erro, retorna exceção e para o processo de assinatura
+								throw new Exception("Não foram encontrados documentos para assinar")
 							}
 
 							localUpdate("Documento(s) para assinar: [ " + documentoAssinar + " ] lido(s) no servidor: "
@@ -408,7 +431,12 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 
 							localUpdate("Buscando arquivo no servidor: Id do arquivo " + id + "Servidor: "
 									+ servidor + "Chave: " + chave);
-
+							// [ DCR ]  
+                            //      realiza o parsing das informações retornadas pela chamada do método
+							//            getDocumentoAssinar.
+							//      vai extrair: Id do responsável, 
+							//      regras de assinatura (que ira determinar a quantidade de vezes assinar o documento)
+							//      id do(s) documento(s) a ser assinado
 							String[] segmentos = documentoAssinar.split("#");
 							List<String> idsDocumento = new ArrayList<String>();
 							// int contaAssinaturas=0;
@@ -432,7 +460,11 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 									idsDocumento.add(numeroDocumento);
 								}
 							}
-							// ler os 5 primeiros;
+							// [ DCR ]   
+							//     quando forem mais de um documento a ser assinados será montada uma fila
+							//     e um agrupamento de 5 documentos a serem mantidos carregados na máquina
+							//     local até consumir todos os documentos da lista lida
+							// 
 							// a cada arquivo que for assinado e enviado ler um novo arquivo
 							// processamento precisa ser assíncrono
 							final int block_of_files = 5;
@@ -442,14 +474,19 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 							// Progress bar setup
 							int pbar_step = (pbar.getMaximum() + idsDocumento.size()) / idsDocumento.size();
 							pbar.setMaximum(idsDocumento.size() * pbar_step);
+							// [ DCR ]   
+							// loop´para consumir (ler) o(s) documento lido(s) do servidor
 							// update_status(pbar_step);
 							while (!idsDocumento.isEmpty()) {
 
 								// Process one element from the processing queue if it's not empty
 								String docID = id;
 								// String elementToProcess = idsDocumento.remove(0);
-
-								// submeter cada id tge arquivo para ser assinado
+								// [ DCR ]   
+								//    Thread de subprocesso que irá processar cada 5 documentos de cada vez
+								//    exceto quando vierem menos do que 5 documentos a serem assinados do
+								//    servidor 
+								//    submeter cada id tge arquivo para ser assinado
 								executorService.submit(() -> {
 									try {
 										// dynamicaly controls the block_of_files value to ensure
@@ -476,6 +513,11 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 											pbar.setValue(pbar.getValue() + ((effectiveBlockSize * pbar_step) / 2));
 											closeButton.enable(false);
 										});
+										// [ DCR ] 
+										//    método para assinar e enviar cada arquivo que esteja na fila 
+										//    dos 5 arquivos lidos
+										//    a medida que a fila é liberada, um novo arquivo da fila 
+										//    principal será lido do servidor
 										// chama assinaEenviaArquivos
 										if (!assinaEenviaArquivos(pdfsParaAssinarQueue, certAlias, contaAssinaturas,
 												docID, effectiveBlockSize)) {
@@ -527,6 +569,10 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 						}
 
 					}
+				// [ DCR ] 
+				// grupo de exceções possíveis vindas do servidor
+				// ainda não foi testado pois ainda não foi criada nenhuma situação com 
+				// estes cenários
 				} catch (Exception e) {
 					String exception_message = "";
 					if (e.getMessage().toLowerCase().contains("###")) {
@@ -594,7 +640,10 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 				count++;
 				// update_status((int) ((count * MY_MAXIMUM) / size));
 			}
-			//
+			// [ DCR ]
+			// Final do processamento com todos os arquivos lidos ou
+			// nem todos os arquivos lidos
+			// os arquivos não lidos serão listados no LOG 
 			if (!idDocsNotSigned.isEmpty()) {
 				localUpdate(" [Atenção ⚠ ]  Nem todos os arquivos foram assinados, apenas os arquivos válidos.");
 				localUpdate("[Erro X ]  Arquivos não assinados" + idDocsNotSigned.toString());
@@ -624,6 +673,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 * @param certAlias
 	 * @param chave
 	 */
+	// [ DCR ]
+	// metdodo para assinar e enviar os arquivos
+	// irá recebr um ou mair arquivos por vez
 	private static boolean assinaEenviaArquivos(ConcurrentLinkedQueue<DocumentData> pdfsParaAssinarQueue,
 			String certAlias, int iQtAssina,
 			String chave, int block_of_files) {
@@ -632,13 +684,16 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		List<DocumentData> pdfsParaAssinar = new ArrayList<DocumentData>();
 		DocumentData element;
 		int count = 0;
-
+		// [ DCR ]
+		// separa os arquivos PDF para serem assinados
 		while ((element = pdfsParaAssinarQueue.poll()) != null && count < block_of_files) {
 			pdfsParaAssinar.add(element);
 			count++;
 		}
 
 		boolean isAssinado = false;
+		// [ DCR ]
+		// assina os arquivos PDDF selecionados
 		for (DocumentData data : pdfsParaAssinar) {
 			byte[] pdf = data.getPdf();
 			byte[] originalPdf = data.getPdf();
@@ -659,11 +714,24 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 				localUpdate("[ Info ⚠ ] Arquivo presente [ pdf.length > 200 ].");
 				try {
 					localUpdate("Iniciando a assinatura do documento: [ " + id + " ]");
-
+					// [ DCR ]
+					// verifica se os bytes lidos são um PDF ou um P7S
+					// para determinar se irá executar uma
+					// - primira assinatura em um PDF
+					// - uma assinatura adicional em um P7S
+					// esta informação determina a forma como a assinatura é
+					/// processada
 					Boolean isPDF = PdfP7SChecker.isPDF(pdf);
 					Boolean isP7S = PdfP7SChecker.isP7S(pdf);
 					;
 					int x = 1;
+					// [ DCR ]
+					// iQtAssina tem o total de vezes que o documento vai ser assinado
+					// quando o metodo gerDocumentosAssinar traz a lista de documentos
+					// a partir do código do responsável, este metodo também tras as
+					// regras de assinaturas (ex, AVALISTA, TESTEMUNHA, etc...)
+					// esta informação determina a quantidade de assinaturas que o
+					// documento irá receber
 					while (x <= iQtdeAssina) {
 						localUpdate("Iniciando a assinatura do documento: [ " + id
 								+ " ] - gerando arquivo P7S.");
@@ -672,6 +740,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 							// Testa arquivo lido
 							localUpdate("PDF lido do servidor referente ao arquivo : [ " + id + " ]");
 							//
+							// [ DCR ]
+							// assina o PDF pela primeira vez
 							signedPdf = pdfSigner.genP7s(pdf, certAlias, originalPdf);
 							localUpdate("Foi assinado um documento PDF para o arquivo : [ " + id + " ]");
 							pdf = signedPdf;
@@ -695,6 +765,10 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 									originalPdf = (byte[]) ((CMSProcessableByteArray) signedContent).getContent();
 								else
 									throw (new Exception("ERROR - Erro tentando realizar segunda assinatura"));
+
+								// [ DCR ]
+								// assina o PDF depois da primeira assinatura
+								// segunda assinatura em diante.
 								signedPdf = pdfSigner.genP7s(pdf, certAlias, originalPdf);
 								isAssinado = (x >= iQtdeAssina);
 								localUpdate("Foi assinado um documento P7S para o arquivo : [ " + id + " ]");
@@ -772,6 +846,9 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 * 
 	 * @param status
 	 */
+	// [ DCR ]
+	// Atualiza Log e status na caixa de mensagem da tela do
+	// aplicativo
 	private static void localUpdate(String status) {
 
 		logger.log(status);
@@ -789,6 +866,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 * @param value
 	 */
 	// @Override
+	// [ DCR ]
+	// candidato a depreciação - não utilizável
 	public static void update_status(int value) {
 
 		try {

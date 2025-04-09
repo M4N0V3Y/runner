@@ -3,6 +3,8 @@ package com.assinador;
 import java.util.ArrayList;
 import java.util.List;
 
+// [DCR]
+// classe  FACADE assinador dos documentos
 public class PdfWs {
 
     private final String servidor;
@@ -48,7 +50,13 @@ public class PdfWs {
         try {
             notifyObservers(
                     "PdfWs::PdfWs - Inicializa:: [Info ⚠ ]  - Iniciando o componente AssinaCertificadoAPIClienteB.");
-            assinaCertificadoAPICliente = new AssinaCertificadoAPIClienteB(observer);
+
+            // [ DCR ]
+            // Instancia a class Arquivo
+            // ** Esta classe é a implementação da interface IArquivo
+            // *** por sua vez a classe IArquivo é a implementação da WSDL
+            //
+            assinaCertificadoAPICliente = new AssinaCertificadoAPIClienteB(servidor, observer);
             notifyObservers(
                     "PdfWs::PdfWs - Inicializa:: [Info ✔ ]  - Componente AssinaCertificadoAPIClienteB inicializado.");
         } catch (Exception e) {
@@ -73,7 +81,7 @@ public class PdfWs {
         try {
             notifyObservers("PdfWs::getDocumentoAssinar - WEBSERVICE:: [INFO ⚠] buscar arquivo(s) para assinar  "
                     + codResponsavel + "  no servidoe.");
-             retorno = assinaCertificadoAPICliente.callGetDocumentoAssinarService(senha, codResponsavel, chave);
+            retorno = assinaCertificadoAPICliente.callGetDocumentoAssinarService(senha, codResponsavel, chave);
 
         } catch (Exception e) {
             notifyObservers(

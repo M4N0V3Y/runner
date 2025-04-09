@@ -25,6 +25,8 @@ import javax.xml.namespace.QName;
  * provided in this class.
  * 
  */
+// [DCR]
+// classe gerada pela API do servidor (WSDL)
 @XmlRegistry
 public class ObjectFactory {
 
