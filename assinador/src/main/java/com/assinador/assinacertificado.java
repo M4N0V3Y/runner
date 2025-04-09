@@ -1,4 +1,5 @@
 package com.assinador;
+
 import com.RunnerUtils;
 
 import java.awt.Color;
@@ -31,8 +32,6 @@ import java.util.concurrent.TimeUnit;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSTypedData;
-
-
 
 //import javafx.scene.paint.Color;
 
@@ -168,11 +167,13 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		// *
 		// USE ALWAYS YOU NEED TO DEBUG
 		// START - Only for debug - remove it
-		args = new String[2];
-		// PDF - 
-		args[0] = "assinacertificado:60861702#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#07/04/2025_17:10:50#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
-		// P7S args[0] = "assinacertificado:32661916#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#26/03/2025_17:29:05#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
-		
+		// args = new String[2];
+		// PDF -
+		// args[0] =
+		// "assinacertificado:31005232#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#09/04/2025_12:26:08#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
+		// P7S args[0] =
+		// "assinacertificado:32661916#http://wcfassinanetsuporte.assina.net.br/arquivo.svc#2160#26/03/2025_17:29:05#AN#3#http://wcfapisuporte.assina.net.br#S;15/08/2020##";
+
 		// END - Only for debug - remove it
 		// */
 		logger = Logger.getInstance();
@@ -183,7 +184,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			// Não pode ser usado antes de inicializar os componentes do Frame
 			// localUpdate("Argumentos");
 			String sEntryCommand = args[0];
-			logger.log("Argumentos na linha de entrada : " + sEntryCommand);
+			logger.log("[ INFO ✔  ] Argumentos na linha de entrada : " + sEntryCommand);
 			String[] arguments = sEntryCommand.split("#");
 
 			for (String arg : arguments) {
@@ -328,12 +329,13 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 * @param servidor
 	 * @param chave
 	 */
-	@SuppressWarnings({"unchecked", "unchecked", "unchecked"})
+	@SuppressWarnings({ "unchecked", "unchecked", "unchecked", "deprecation" })
 	static void SignAllDocuments(String idsToSign, String servidor, String chave, String certAlias) {
 		// -----------------------
 		// Assinar os documentos.
 		// -----------------------
 		try {
+			closeButton.enable(false);
 			String log_msg = "";
 			log_msg = "[Info ⚠ ] - Iniciando o componente assinador do(s) documentosr";
 			localUpdate(log_msg);
@@ -366,7 +368,6 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			int iQtdeAssina = 0;
 
 			// pbar.setValue(count);
-			
 
 			// localUpdate("Prefixo: " + sPrefixo);
 			localUpdate("Assinate/Documento(s) : [ " + idsToSign + " ]");
@@ -410,97 +411,100 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 
 							String[] segmentos = documentoAssinar.split("#");
 							List<String> idsDocumento = new ArrayList<String>();
-							//int contaAssinaturas=0;
+							// int contaAssinaturas=0;
 							for (String segmento : segmentos) {
 								String[] nomeFuncoes = (segmento).split("-");
 								String responsavel = nomeFuncoes[0];
 								String[] partes = (nomeFuncoes[1]).split(";");
 								String[] regrasAssinatura = (partes[0]).split(",");
-								localUpdate("Responsável   [  "+ responsavel +"  ]");
-								contaAssinaturas=0;
+								localUpdate("Responsável   [  " + responsavel + "  ]");
+								contaAssinaturas = 0;
 								for (int index = 0; index < regrasAssinatura.length; index++) {
-									localUpdate(".... Regar de assinatura:  [  "+ regrasAssinatura[index]+"  ]");
+									localUpdate(".... Regar de assinatura:  [  " + regrasAssinatura[index] + "  ]");
 									contaAssinaturas++;
-									
-								}	
-														
+
+								}
+
 								// Um ou mais documentos a assinar
-								for(int ndx=1;ndx<partes.length;ndx++){
+								for (int ndx = 1; ndx < partes.length; ndx++) {
 									String numeroDocumento = partes[ndx];
-									localUpdate("........ Documento a ser assinado:  "+ numeroDocumento);
+									localUpdate("........ Documento a ser assinado:  " + numeroDocumento);
 									idsDocumento.add(numeroDocumento);
 								}
 							}
 							// ler os 5 primeiros;
 							// a cada arquivo que for assinado e enviado ler um novo arquivo
-							// processamento precisa ser assíncrono							
-						    final int block_of_files = 5; 
+							// processamento precisa ser assíncrono
+							final int block_of_files = 5;
 							ExecutorService executorService = Executors.newFixedThreadPool(block_of_files);
 							// Preenche a list de ids de documentos com os 5 primriros Ids
-							//Iterator<String> docsTterator = idsDocumento.iterator();
-							//Progress bar setup
-							int pbar_step = (pbar.getMaximum()+idsDocumento.size())/idsDocumento.size();
-							pbar.setMaximum(idsDocumento.size()*pbar_step);	
-							//update_status(pbar_step);						
+							// Iterator<String> docsTterator = idsDocumento.iterator();
+							// Progress bar setup
+							int pbar_step = (pbar.getMaximum() + idsDocumento.size()) / idsDocumento.size();
+							pbar.setMaximum(idsDocumento.size() * pbar_step);
+							// update_status(pbar_step);
 							while (!idsDocumento.isEmpty()) {
 
-								// Process one element from the processing queue if it's not empty								
+								// Process one element from the processing queue if it's not empty
 								String docID = id;
-								//String elementToProcess = idsDocumento.remove(0);
-								
+								// String elementToProcess = idsDocumento.remove(0);
+
 								// submeter cada id tge arquivo para ser assinado
 								executorService.submit(() -> {
-									try {									
-                                        // dynamicaly controls the block_of_files value to ensure 
+									try {
+										// dynamicaly controls the block_of_files value to ensure
 										// that it will deal with the total blocks from isDocument poll and
 										// also the reminder
 										int remainingDocuments = idsDocumento.size();
 										int effectiveBlockSize = Math.min(block_of_files, remainingDocuments);
-                                        //block_of_files = effectiveBlockSize;
+										// block_of_files = effectiveBlockSize;
 
-										while(pdfsParaAssinarQueue.size()< effectiveBlockSize)
-										{
+										while (pdfsParaAssinarQueue.size() < effectiveBlockSize) {
 											String elementToProcess = idsDocumento.remove(0);
 											localUpdate("Submitting to process: " + elementToProcess);
-											byte[] fetchedPdf = ws.getPdfBytes(elementToProcess, docID);										
-											localUpdate("Arquivo Id [ " + docID + " ] lido no servidor: "+ servidor + " com a chave: " + elementToProcess);
-											localUpdate(String.format(" Tamanho do arquivo em bytes: %d", fetchedPdf.length));										
-											localUpdate(String.format(" Tamanho do arquivo em bytes: %d", fetchedPdf.length));
+											byte[] fetchedPdf = ws.getPdfBytes(elementToProcess, docID);
+											localUpdate("Arquivo Id [ " + docID + " ] lido no servidor: " + servidor
+													+ " com a chave: " + elementToProcess);
+											localUpdate(String.format(" Tamanho do arquivo em bytes: %d",
+													fetchedPdf.length));
+											localUpdate(String.format(" Tamanho do arquivo em bytes: %d",
+													fetchedPdf.length));
 											DocumentData data = new DocumentData(fetchedPdf, elementToProcess);
 											pdfsParaAssinarQueue.offer(data);
 										}
 										SwingUtilities.invokeLater(() -> {
-											pbar.setValue(pbar.getValue()+((effectiveBlockSize*pbar_step)/2));
+											pbar.setValue(pbar.getValue() + ((effectiveBlockSize * pbar_step) / 2));
+											closeButton.enable(false);
 										});
 										// chama assinaEenviaArquivos
-										if(!assinaEenviaArquivos(pdfsParaAssinarQueue, certAlias, contaAssinaturas, docID, effectiveBlockSize)){
+										if (!assinaEenviaArquivos(pdfsParaAssinarQueue, certAlias, contaAssinaturas,
+												docID, effectiveBlockSize)) {
 											iErroCritico++;
-											if (!idDocsNotSigned.contains(idNovo)) idDocsNotSigned.add(idNovo);
+											if (!idDocsNotSigned.contains(idNovo))
+												idDocsNotSigned.add(idNovo);
 											count--;
 											SwingUtilities.invokeLater(() -> {
-												pbar.setValue(pbar.getValue()+((effectiveBlockSize*pbar_step)/2));
-											});											
-										}; 
-									
+												pbar.setValue(pbar.getValue() + ((effectiveBlockSize * pbar_step) / 2));
+											});
+										}
+										;
+
 										pdfsParaAssinarQueue.clear();
-										//ao inves do qtdAssina
+										// ao inves do qtdAssina
 										// limpa pdfsParaAssinar
 									} catch (Exception e) {
 
-										localUpdate("[EXEÇÃO X ] Exceção ao tentar ler ou processar o Arquivo Id [ " + docID + " ] do servidor: "+ servidor + " com a chave: " + Integer.parseInt(chave));
-										localUpdate("[EXEÇÃO X ] : "+e.getMessage());										
-										if (!idDocsNotSigned.contains(idNovo)) idDocsNotSigned.add(idNovo);
-											SwingUtilities.invokeLater(() -> {
-												pbar.setBackground(Color.RED);
-											});
+										localUpdate("[EXEÇÃO X ] Exceção ao tentar ler ou processar o Arquivo Id [ "
+												+ docID + " ] do servidor: " + servidor + " com a chave: "
+												+ Integer.parseInt(chave));
+										localUpdate("[EXEÇÃO X ] : " + e.getMessage());
 									}
 
 								});
 
 							}
-							//Finish all threads
-							//executorService.shutdown();
-
+							// Finish all threads
+							// executorService.shutdown();
 
 						} catch (NumberFormatException e) {
 							localUpdate("[EXCEÇÃO X] Arquivo " + id + " não disponível");
@@ -588,15 +592,14 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 				}
 
 				count++;
-				//update_status((int) ((count * MY_MAXIMUM) / size));
+				// update_status((int) ((count * MY_MAXIMUM) / size));
 			}
 			//
 			if (!idDocsNotSigned.isEmpty()) {
 				localUpdate(" [Atenção ⚠ ]  Nem todos os arquivos foram assinados, apenas os arquivos válidos.");
 				localUpdate("[Erro X ]  Arquivos não assinados" + idDocsNotSigned.toString());
 				localUpdate("------------------------------------------------------------------------------- ");
-			}
-			else{
+			} else {
 
 				localUpdate(" [Info ⚠ ] Todos os arquivos válidos foram assinados.");
 			}
@@ -611,6 +614,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 						+ trace.getLineNumber() + ") ]  -  " + trace.toString());
 			}
 		}
+		closeButton.enable(true);
 
 	}
 
@@ -620,7 +624,8 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 * @param certAlias
 	 * @param chave
 	 */
-	private static boolean assinaEenviaArquivos(ConcurrentLinkedQueue<DocumentData> pdfsParaAssinarQueue, String certAlias, int iQtAssina,
+	private static boolean assinaEenviaArquivos(ConcurrentLinkedQueue<DocumentData> pdfsParaAssinarQueue,
+			String certAlias, int iQtAssina,
 			String chave, int block_of_files) {
 
 		int iQtdeAssina = iQtAssina;
@@ -637,7 +642,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		for (DocumentData data : pdfsParaAssinar) {
 			byte[] pdf = data.getPdf();
 			byte[] originalPdf = data.getPdf();
-			
+
 			String id = data.getIdDoc();
 			byte[] signedPdf = null; // new ByteArrayInputStream(null);
 			//
@@ -667,7 +672,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 							// Testa arquivo lido
 							localUpdate("PDF lido do servidor referente ao arquivo : [ " + id + " ]");
 							//
-							signedPdf = pdfSigner.genP7s(pdf, certAlias,originalPdf);
+							signedPdf = pdfSigner.genP7s(pdf, certAlias, originalPdf);
 							localUpdate("Foi assinado um documento PDF para o arquivo : [ " + id + " ]");
 							pdf = signedPdf;
 							isPDF = false;
@@ -676,38 +681,35 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 							isAssinado = (x >= iQtdeAssina);
 						} else if (isP7S) {
 							CMSSignedData signedData = null;
-							try 
-							{
-								if(signedPdf==null){
-								   signedData = new CMSSignedData(originalPdf);
-								   pdf = originalPdf;
-							       }
-								else signedData = new CMSSignedData(signedPdf);
-	
-                                // Extract PDF content
-                                @SuppressWarnings("null")
+							try {
+								if (signedPdf == null) {
+									signedData = new CMSSignedData(originalPdf);
+									pdf = originalPdf;
+								} else
+									signedData = new CMSSignedData(signedPdf);
+
+								// Extract PDF content
+								@SuppressWarnings("null")
 								CMSTypedData signedContent = signedData.getSignedContent();
-								if (signedContent instanceof CMSProcessableByteArray) 
-                                	originalPdf = (byte[]) ((CMSProcessableByteArray) signedContent).getContent();
-                                else 
-									throw( new Exception("ERROR - Erro tentando realizar segunda assinatura"));
-								signedPdf = pdfSigner.genP7s(pdf, certAlias,originalPdf);
+								if (signedContent instanceof CMSProcessableByteArray)
+									originalPdf = (byte[]) ((CMSProcessableByteArray) signedContent).getContent();
+								else
+									throw (new Exception("ERROR - Erro tentando realizar segunda assinatura"));
+								signedPdf = pdfSigner.genP7s(pdf, certAlias, originalPdf);
 								isAssinado = (x >= iQtdeAssina);
 								localUpdate("Foi assinado um documento P7S para o arquivo : [ " + id + " ]");
-								pdf = signedPdf;								
+								pdf = signedPdf;
 
-							}
-							catch(Exception e)
-							{
+							} catch (Exception e) {
 								signedData = null;
-								localUpdate("Ocorreu um erro ao tentar assinar um documento P7S para o arquivo : [ " + id + " ] "+e.getMessage());
+								localUpdate("Ocorreu um erro ao tentar assinar um documento P7S para o arquivo : [ "
+										+ id + " ] " + e.getMessage());
 								localUpdate("O documento não foi assinado.");
-								//pdf = signedPdf;	
-								isAssinado = false;							
+								// pdf = signedPdf;
+								isAssinado = false;
 							}
 
-							
-						}	else {
+						} else {
 							//
 							// Testa arquivo lido
 							localUpdate("O arquivo : [ " + id + " ] lido do servidor está em formato inválido");
@@ -755,7 +757,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 						}
 					} else
 						localUpdate("[ERRO X ] Documento Id: (" + id
-								+ ") foi lido com erro. ");					
+								+ ") foi lido com erro. ");
 				} catch (Exception e) {
 					// throw new RuntimeException("#");
 					throw new RuntimeException("pdfSigner:" + e.getMessage().toLowerCase());
@@ -772,16 +774,15 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	 */
 	private static void localUpdate(String status) {
 
-		
-		SwingUtilities.invokeLater(() ->{
+		logger.log(status);
+		SwingUtilities.invokeLater(() -> {
 			String originalStr = textArea.getText();
 			textArea.setText(originalStr + "" + status + " ] ");
-		    logger.log(status);
 			// statusBar.setText(status);
 		});
-		
 
 	}
+
 	/**
 	 * backend level updates
 	 * 
