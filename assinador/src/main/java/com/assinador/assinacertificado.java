@@ -2,6 +2,9 @@ package com.assinador;
 
 import com.RunnerUtils;
 
+//import javafx.scene.text.Font;
+import java.awt.Font;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +51,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	private static JProgressBar pbar;
 	private static JButton closeButton;
 	private static JButton signButton;
+	private static JButton versionButton;
 	private static JTextArea textArea;
 	static JScrollPane sp;
 	private static String[] items; // = { "Item 1", "Item 2", "Item 3" };
@@ -188,6 +192,24 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 	/**
 	 * 
 	 */
+	private void versionButtonAction() {
+		//
+		List<String> memoryLogs = logger.getMemoryLogs();
+		if (memoryLogs != null) {
+			String originalStr = textArea.getText();
+			for (String slogLine : memoryLogs) {
+				String logs = originalStr + slogLine;
+				textArea.setText(logs);
+				originalStr = textArea.getText();
+
+			}
+		}
+
+	}
+
+	/**
+	 * 
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == comboBox) {
 			comboBoxAction();
@@ -199,6 +221,10 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		if (e.getSource() == signButton) {
 			signButtonAction();
 		}
+		if (e.getSource() == versionButton) {
+			versionButtonAction();
+		}
+
 	}
 
 	/**
@@ -295,6 +321,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			InitComponents();
 			comboBox.addActionListener(frame);
 			closeButton.addActionListener(frame);
+			versionButton.addActionListener(frame);
 			signButton.addActionListener(frame);
 			localUpdate("Assinador está em execução");
 
@@ -335,7 +362,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			comboBox = new JComboBox<>(items);
 			closeButton = new JButton("Retornar");
 			signButton = new JButton("Assinar");
-
+			versionButton = new JButton("Versão");
 			label = new JLabel("lblAssinador");
 			label.setText("Assinador");
 			textArea = new JTextArea();
@@ -350,9 +377,13 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			closeButton.setBounds(500, 390, 100, 30);
 			frame.add(closeButton);
 
+			versionButton.setBounds(20, 390, 100, 30);
+			frame.add(versionButton);
+
 			signButton.setBounds(380, 85, 80, 30);
 			frame.add(signButton);
-
+			Font customFont = new Font("Arial", Font.PLAIN, 9);
+			textArea.setFont(customFont);
 			textArea.setBounds(20, 145, 550, 100); // x, y, width, height
 			textArea.setRows(15);
 			textArea.setColumns(65);
@@ -373,7 +404,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 			pbar.setMaximum(MY_MAXIMUM);
 			pbar.setBackground(Color.LIGHT_GRAY);
 			pbar.setForeground(Color.GREEN);
-			pbar.setBounds(20, 390, 480, 30);
+			pbar.setBounds(20, 350, 480, 30);
 			pbar.setBorder(border);
 			pbar.setValue(MY_MINIMUM);
 			// add to JPanel
@@ -419,6 +450,7 @@ public class assinacertificado extends JFrame implements ActionListener, BackEnd
 		//
 		try {
 			closeButton.enable(false);
+			versionButton.enable(true);
 			String log_msg = "";
 			log_msg = "[Info ⚠ ] - Iniciando o componente assinador do(s) documentosr";
 			localUpdate(log_msg);

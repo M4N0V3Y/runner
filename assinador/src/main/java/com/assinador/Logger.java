@@ -16,7 +16,7 @@ public class Logger {
     private static Logger instance;
     private BufferedWriter writer;
     private BufferedWriter mem_writer;
-    private boolean isAtivo;
+    private boolean islogAtivo;
     private static final String LOG_DIR;
     private static final String LOG_FILE_PATTERN = "assina_certificado_";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HH:mm:ss");
@@ -56,8 +56,8 @@ public class Logger {
     // quando ativo = true -- logs serão gravados no arquivo e na memória
     // quando ativo = false -- logs serão gravados somente na memória
     private Logger(boolean ativo) {
-        this.isAtivo = ativo;
-        if (isAtivo) {
+        this.islogAtivo = ativo;
+        if (islogAtivo) {
             try {
                 String timestamp = DATE_FORMAT.format(new Date()).replace(":", "");
                 String logFileName = LOG_DIR + LOG_FILE_PATTERN + timestamp + ".log";
@@ -77,6 +77,7 @@ public class Logger {
     }
 
     public static Logger getInstance(boolean ativo) {
+
         if (instance == null || instance.isAtivo() != ativo) {
             synchronized (Logger.class) {
                 if (instance == null || instance.isAtivo() != ativo) {
@@ -94,13 +95,13 @@ public class Logger {
     public synchronized void log(String message) {
         try {
 
-            if (!isAtivo) {
-                memoryLogs.add(new Date() + " - " + message);
-            } else {
+            if (this.islogAtivo) {
                 writer.write(new Date() + " - " + message);
                 writer.newLine();
                 writer.flush();
-            }
+            } else
+                memoryLogs.add(new Date() + " - " + message);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -126,7 +127,7 @@ public class Logger {
     // [DCR]
     @Deprecated
     public void Ativar(boolean status) {
-        this.isAtivo = status;
+        this.islogAtivo = status;
     }
 
     /**
@@ -135,7 +136,7 @@ public class Logger {
      * @return true se estiver salvando em arquivo, false se em memória.
      */
     public boolean isAtivo() {
-        return this.isAtivo;
+        return this.islogAtivo;
     }
 
     /**
@@ -145,7 +146,7 @@ public class Logger {
      *         salvando em arquivo.
      */
     public List<String> getMemoryLogs() {
-        if (!isAtivo) {
+        if (this.islogAtivo) {
             return new ArrayList<>(memoryLogs);
         }
         return null;
