@@ -1,8 +1,11 @@
 package com.assinador;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.pdfbox.io.RandomAccessBuffer;
 import org.apache.pdfbox.pdfparser.PDFParser;
@@ -15,6 +18,55 @@ import org.bouncycastle.cms.CMSSignedData;
 // um arquivo PDF ou um arquivo P7S
 public class PdfP7SChecker {
 
+    private static final String LOG_DIR;
+    private static final String LOG_FILE_PATTERN = "verificado_do_servidor_";
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HH:mm:ss");
+
+    static {
+        String osName = System.getProperty("os.name").toLowerCase();
+        String tempDir = System.getProperty("java.io.tmpdir");
+
+        if (osName.contains("win")) {
+            // Running on Windows, using C:\temp\
+            LOG_DIR = "C:" + File.separator + "temp" + File.separator;
+            File dir = new File(LOG_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Create directory if it doesn't exist
+            }
+        } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
+            // Running on Linux, Unix, or AIX, using /tmp/
+            LOG_DIR = File.separator + "tmp" + File.separator;
+            File dir = new File(LOG_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Create directory if it doesn't exist
+            }
+        } else {
+            // Default to the system's temporary directory
+            LOG_DIR = tempDir + File.separator + LOG_FILE_PATTERN + File.separator;
+            File dir = new File(LOG_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Create directory if it doesn't exist
+            }
+        }
+    }
+
+    // [ DCR ]
+    // este método foi usada nos testes e permite gravar localmente os arquivos
+    // assinados
+    // este método pode ser suprimido no modo de produção
+    //
+    private static String fullFlePath(String extensao) {
+        String timestamp = DATE_FORMAT.format(new Date()).replace(":", "");
+        String sFileName = LOG_DIR + LOG_FILE_PATTERN + timestamp + "." + extensao;
+
+        return sFileName;
+    }
+
+    /**
+     * 
+     * @param fileBytes
+     * @return
+     */
     public static FileType checkFileType(byte[] fileBytes) {
         if (isPDF(fileBytes)) {
             return FileType.PDF;
@@ -55,7 +107,7 @@ public class PdfP7SChecker {
 
                 PDDocument document = parser.getPDDocument();
 
-                document.save("C:\\temp\\lido_do_servidor.pdf");
+                document.save(fullFlePath("pdf"));
                 document.close(); // Important: Close the document to release resources
                 return true; // If no exception, it's likely a PDF
             } catch (Exception ex) {
@@ -73,7 +125,7 @@ public class PdfP7SChecker {
         ByteArrayInputStream fileBytes = new ByteArrayInputStream(inputFBytes);
         try {
             CMSSignedData cmsData = new CMSSignedData(fileBytes);
-            try (FileOutputStream fos = new FileOutputStream("C:\\temp\\lido_do_servidor.p7s")) { // File path
+            try (FileOutputStream fos = new FileOutputStream(fullFlePath("p7s"))) { // File path
                 fos.write(inputFBytes); // Write the entire byte array to the file
 
             } catch (IOException e) {

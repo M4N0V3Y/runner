@@ -1,40 +1,38 @@
 package com.assinador;
 
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.CertStore;
 import java.security.cert.Certificate;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.X509CertSelector;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-// [DCR]
-// classe responsável por trazer os certificados válidos para a caixa de combinação da tela principal
 public class LoadCertificates {
 
-    private static List<BackEndObserver> observers;
-    private static KeyStore ksMy;
-    private static KeyStore ksRoot;
-
-    private static List<String> certNames;
-    private static List<Certificate> certList;
+    private static List<BackEndObserver> observers = new ArrayList<>();
+    private static KeyStore ksPersonal = null;
+    private static KeyStore ksTrusted = null;
+    private static List<String> certNames = new ArrayList<>();
+    private static List<Certificate> certList = new ArrayList<>();
     private static String status;
-    //
-    private static String _LOAD_CERT_PK = "CARREGA CERTIFICADOS:: [INFO ⚠] - Obteve chave primária do certificado";
-    private static String _LOAD_CERT_OK = "CARREGA CERTIFICADOS:: [INFO ✅] - Obteve os certificados com sucesso";
-    private static String _LOAD_CERT_INIT = "CARREGA CERTIFICADOS:: [INFO ⚠] - Iniciando o processo de carregamento dos Cetificados";
-    private static String _LOAD_CERT_DONE_OK = "CARREGA CERTIFICADOS:: [INFO ✅] - Cetificados carregados";
-    private static String _LOAD_CERT_DONE_FAIL = "CARREGA CERTIFICADO:: [INFO X] - Falha ao carregar os certificados";
-    private static String _LOAD_CERT_PK_ERR = "CARREGA CERTIFICADOS:: [ERRO X] - Falha ao obter a  chave primária do certificado";
-    private static String _LOAD_CERT_ERR = "CARREGA CERTIFICADOS:: [ERRO X] - Falha ao obter os certificados";
+
+    private static final String OS_NAME = System.getProperty("os.name").toLowerCase();
+    private static final String WINDOWS = "win";
+    private static final String LINUX = "linux";
+
+    private static final String _LOAD_CERT_PK = "CARREGA CERTIFICADOS:: [INFO ⚠] - Obteve chave primária do certificado";
+    private static final String _LOAD_CERT_OK = "CARREGA CERTIFICADOS:: [INFO ✅] - Obteve os certificados com sucesso";
+    private static final String _LOAD_CERT_INIT = "CARREGA CERTIFICADOS:: [INFO ⚠] - Iniciando o processo de carregamento dos Cetificados";
+    private static final String _LOAD_CERT_DONE_OK = "CARREGA CERTIFICADOS:: [INFO ✅] - Cetificados carregados";
+    private static final String _LOAD_CERT_DONE_FAIL = "CARREGA CERTIFICADO:: [INFO X] - Falha ao carregar os certificados";
+    private static final String _LOAD_CERT_PK_ERR = "CARREGA CERTIFICADOS:: [ERRO X] - Falha ao obter a  chave primária do certificado";
+    private static final String _LOAD_CERT_ERR = "CARREGA CERTIFICADOS:: [ERRO X] - Falha ao obter os certificados";
 
     /**
      * 
@@ -54,31 +52,22 @@ public class LoadCertificates {
 
     /**
      * 
+     * @param newStatus
      */
     private static void notifyObservers(String newStatus) {
-        try {
-
-            for (BackEndObserver observer : observers) {
-                status = newStatus;
-                observer.update(status);
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        for (BackEndObserver observer : observers) {
+            status = newStatus;
+            observer.update(status);
         }
-
     }
 
     /**
-     * Constructor
+     * 
+     * @param observer
      */
     LoadCertificates(assinacertificado observer) {
-
-        observers = new ArrayList<>();
         observers.add(observer);
-
         load();
-
     }
 
     /**
@@ -94,7 +83,7 @@ public class LoadCertificates {
 
         PrivateKey thisKelclKey;
         try {
-            thisKelclKey = (PrivateKey) ksMy.getKey(alias, pswString);
+            thisKelclKey = (PrivateKey) ksPersonal.getKey(alias, pswString);
             if (thisKelclKey == null)
                 throw new KeyStoreException();
             notifyObservers(_LOAD_CERT_PK);
@@ -102,7 +91,7 @@ public class LoadCertificates {
         } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
 
             try {
-                thisKelclKey = (PrivateKey) ksRoot.getKey(alias, pswString);
+                thisKelclKey = (PrivateKey) ksTrusted.getKey(alias, pswString);
                 return thisKelclKey;
             } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e2) {
 
@@ -116,106 +105,187 @@ public class LoadCertificates {
 
     }
 
+    /**
+     * 
+     * @param alias
+     * @return
+     */
     public static Certificate[] getCertificateChain(String alias) {
-
-        Certificate[] certificateChain;
-
+        Certificate[] certificateChain = null;
         try {
-            certificateChain = ksMy.getCertificateChain(alias);
-        } catch (KeyStoreException ex) {
-            try {
-                certificateChain = ksRoot.getCertificateChain(alias);
-            } catch (final KeyStoreException ex2) {
-                notifyObservers(_LOAD_CERT_ERR);
-                return null;
+            if (ksPersonal != null && ksPersonal.containsAlias(alias)) {
+                certificateChain = ksPersonal.getCertificateChain(alias);
+            } else if (ksTrusted != null && ksTrusted.containsAlias(alias)) {
+                certificateChain = ksTrusted.getCertificateChain(alias);
             }
-
+        } catch (KeyStoreException ex) {
+            ex.printStackTrace();
+            notifyObservers(_LOAD_CERT_ERR);
+            return null;
         }
         notifyObservers(_LOAD_CERT_OK);
         return certificateChain;
-
     }
 
-    public static List<Certificate> getCertificates() throws Exception {
-
-        return certList;
-    }
-
-    public static List<String> getCertificateNames() throws Exception {
-
-        return certNames;
-    }
-
+    /**
+     * 
+     */
     public static void load() {
+        notifyObservers(_LOAD_CERT_INIT);
         try {
-            notifyObservers(_LOAD_CERT_INIT);
-            // Load the Windows-MY keystore
-            ksMy = KeyStore.getInstance("Windows-MY");
-            ksMy.load(null, null);
-            System.out.println("Certificates in Windows-MY:");
-            // printCertificates(ksMy);
-
-            // Load the Windows-ROOT keystore
-            ksRoot = KeyStore.getInstance("Windows-ROOT");
-            ksRoot.load(null, null);
-            System.out.println("Certificates in Windows-ROOT:");
-            // printCertificates(ksRoot);
-
-            certNames = new ArrayList<String>();
-            certList = new ArrayList<Certificate>();
-            Enumeration<String> aliases = ksRoot.aliases();
-            Enumeration<String> aliases2 = ksMy.aliases();
-
-            while (aliases.hasMoreElements()) {
-                String alias = aliases.nextElement();
-                Certificate cert = ksMy.getCertificate(alias);
-                certList.add(cert);
-                certNames.add(alias);
+            if (OS_NAME.contains(WINDOWS)) {
+                loadWindowsCertificates();
+            } else if (OS_NAME.contains(LINUX)) {
+                loadLinuxCertificates();
+            } else {
+                notifyObservers(
+                        "CARREGA CERTIFICADOS:: [INFO ⚠] - Sistema operacional não reconhecido. Carregamento padrão (apenas certificados confiáveis).");
+                loadTrustedCertificates();
             }
-            while (aliases2.hasMoreElements()) {
-                String alias = aliases2.nextElement();
-                Certificate cert = ksMy.getCertificate(alias);
-                certList.add(cert);
-                certNames.add(alias);
-            }
-
-            // criar um certstore à partir da lista de certificados.
-            CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
-
-            // Apenas certificados válidos - não expirados
-            X509CertSelector selector = new X509CertSelector();
-            selector.setCertificateValid(new Date()); // o selector vai agir como um filtro
-
-            // Retorna apenas os certificados válidos
-            Collection<? extends Certificate> certs = certStore.getCertificates(selector);
-
-            // Certificate[] certList = certObj.toArray(new Certificate[]);
-            Certificate[] f_certList = certs.toArray(new Certificate[0]); // (Certificate[]) certs.toArray();
-            // signer.setCertificates(f_certList);
-            List<String> fileteredNames = new ArrayList<>();
-
-            String[] arrKeys = certNames.toArray(new String[0]);
-            Certificate[] arrValues = certList.toArray(new Certificate[0]);
-            for (int i = 0; i < arrKeys.length; i++) {
-
-                for (Certificate cert_ : f_certList) {
-                    if (arrValues[i] == cert_)
-                        fileteredNames.add(arrKeys[i]);
-                }
-
-            }
-            certNames.clear();
-            certList.clear();
-            certNames = fileteredNames;
-            certList = Arrays.asList(f_certList);
             notifyObservers(_LOAD_CERT_DONE_OK);
-
         } catch (Exception e) {
             notifyObservers(_LOAD_CERT_DONE_FAIL);
             e.printStackTrace();
         }
     }
 
+    /**
+     * 
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
+    private static void loadWindowsCertificates() throws KeyStoreException, NoSuchAlgorithmException, IOException {
+        ksPersonal = KeyStore.getInstance("Windows-MY");
+        try {
+            ksPersonal.load(null, null);
+            System.out.println("Certificates in Windows-MY:");
+            populateCertificateLists(ksPersonal);
+
+            ksTrusted = KeyStore.getInstance("Windows-ROOT");
+            ksTrusted.load(null, null);
+            System.out.println("Certificates in Windows-ROOT:");
+            populateCertificateLists(ksTrusted);
+        } catch (NoSuchAlgorithmException e) {
+
+            e.printStackTrace();
+        } catch (CertificateException e) {
+
+            e.printStackTrace();
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
+    private static void loadLinuxCertificates() throws KeyStoreException, NoSuchAlgorithmException, IOException {
+        // Focus on loading trusted certificates available without passwords
+        ksTrusted = KeyStore.getInstance("JKS"); // Default Java truststore type
+        try {
+            ksTrusted.load(null, null); // Try loading the default truststore
+            System.out.println("Loaded default Java truststore on Linux.");
+            populateCertificateLists(ksTrusted);
+        } catch (IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException e) {
+            System.err.println("Error loading default Java truststore on Linux: " + e.getMessage());
+            // Consider other standard locations for CA certificates if needed
+            // e.g., /etc/ssl/certs/ (may require parsing and conversion)
+        }
+
+        // For personal certificates, without password access, the application
+        // might need to rely on certificates already loaded by the system
+        // (e.g., in the browser's trust store) or require the user to import
+        // a password-less certificate into a specific location/format.
+        System.out.println(
+                "On Linux, loading personal certificates without passwords requires platform-specific solutions or user-provided files.");
+        // Further implementation for Linux personal certificates would depend on
+        // the specific requirements and how the A1 certificate is intended to be used.
+    }
+
+    /**
+     * 
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
+    private static void loadTrustedCertificates() throws KeyStoreException, NoSuchAlgorithmException, IOException {
+        ksTrusted = KeyStore.getInstance("JKS");
+        try {
+            ksTrusted.load(null, null);
+            System.out.println("Loaded default Java truststore.");
+            populateCertificateLists(ksTrusted);
+        } catch (IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException e) {
+            System.err.println("Error loading default Java truststore: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 
+     * @param keystore
+     * @throws KeyStoreException
+     */
+    private static void populateCertificateLists(KeyStore keystore) throws KeyStoreException {
+        if (keystore != null) {
+            Enumeration<String> aliases = keystore.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                Certificate cert = keystore.getCertificate(alias);
+                if (cert != null && isCertificateValid(cert)) { // Add validity check here
+                    certList.add(cert);
+                    certNames.add(alias);
+                }
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param cert
+     * @return
+     */
+    private static boolean isCertificateValid(Certificate cert) {
+        if (cert instanceof java.security.cert.X509Certificate) {
+            try {
+                ((java.security.cert.X509Certificate) cert).checkValidity(new Date());
+                return true;
+            } catch (java.security.cert.CertificateExpiredException
+                    | java.security.cert.CertificateNotYetValidException e) {
+                return false;
+            }
+        }
+        return true; // Assume other certificate types are valid for simplicity
+    }
+
+    /**
+     * 
+     * @return
+     * @throws Exception
+     */
+    public static List<Certificate> getCertificates() throws Exception {
+
+        return certList;
+    }
+
+    /**
+     * 
+     * @return
+     * @throws Exception
+     */
+    public static List<String> getCertificateNames() throws Exception {
+
+        return certNames;
+    }
+
+    /**
+     * @param keystore
+     * @throws Exception
+     */
     private static void printCertificates(KeyStore keystore) throws Exception {
         Enumeration<String> aliases = keystore.aliases();
         while (aliases.hasMoreElements()) {
@@ -225,5 +295,4 @@ public class LoadCertificates {
             System.out.println(cert);
         }
     }
-
 }

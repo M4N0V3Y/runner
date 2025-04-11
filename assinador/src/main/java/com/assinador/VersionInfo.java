@@ -17,6 +17,9 @@ public class VersionInfo {
                                                                                 // "Specification-Version"
                 if (version != null) {
                     return version;
+                } else {
+                    version = "9.0.18";
+                    return version;
                 }
             }
         } catch (IOException e) {

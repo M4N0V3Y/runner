@@ -1,6 +1,9 @@
 package com.assinador;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -8,6 +11,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,11 +49,13 @@ import org.bouncycastle.util.Store;
 // [DCR]
 // classe  responsável pela assinatura dos arquivos lidos do servidor
 public class PdfSigner {
+    private static final String LOG_DIR;
+    private static final String LOG_FILE_PATTERN = "assinado_local_";
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HH:mm:ss");
 
     private final KeyStore keyStore;
     private List<BackEndObserver> observers;
     private String status;
-    private assinacertificado _observer;
 
     private static byte[] bytepolicy = {
             0x30, 0x3b, 0x06, 0x08, 0x60, 0x4c, 0x01, 0x07, 0x01, 0x01, 0x02, 0x02, 0x30, 0x2f, 0x30,
@@ -57,6 +63,46 @@ public class PdfSigner {
             (byte) 0xa2, (byte) 0xc6, 0x28, 0x19, (byte) 0x81, 0x71, 0x6c, (byte) 0x95, (byte) 0xc7, (byte) 0x98,
             (byte) 0x99, 0x03, (byte) 0x98, 0x44, 0x52, 0x3b, 0x1c, 0x61, (byte) 0xc2, (byte) 0xc9, 0x62, 0x28,
             (byte) 0x9c, (byte) 0xda, (byte) 0xc7, (byte) 0x81, 0x1f, (byte) 0xee, (byte) 0xe2, (byte) 0x9e };
+
+    static {
+        String osName = System.getProperty("os.name").toLowerCase();
+        String tempDir = System.getProperty("java.io.tmpdir");
+
+        if (osName.contains("win")) {
+            // Running on Windows, using C:\temp\
+            LOG_DIR = "C:" + File.separator + "temp" + File.separator;
+            File dir = new File(LOG_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Create directory if it doesn't exist
+            }
+        } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
+            // Running on Linux, Unix, or AIX, using /tmp/
+            LOG_DIR = File.separator + "tmp" + File.separator;
+            File dir = new File(LOG_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Create directory if it doesn't exist
+            }
+        } else {
+            // Default to the system's temporary directory
+            LOG_DIR = tempDir + File.separator + LOG_FILE_PATTERN + File.separator;
+            File dir = new File(LOG_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs(); // Create directory if it doesn't exist
+            }
+        }
+    }
+
+    // [ DCR ]
+    // este método foi usada nos testes e permite gravar localmente os arquivos
+    // assinados
+    // este método pode ser suprimido no modo de produção
+    //
+    private String fullFlePath(String instancia) {
+        String timestamp = DATE_FORMAT.format(new Date()).replace(":", "");
+        String sFileName = LOG_DIR + LOG_FILE_PATTERN + instancia + timestamp + ".p7s";
+
+        return sFileName;
+    }
 
     /**
      * 
@@ -94,7 +140,6 @@ public class PdfSigner {
     public PdfSigner(assinacertificado observer) throws Exception {
         observers = new ArrayList<>();
         addObserver(observer);
-        _observer = observer;
         keyStore = KeyStore.getInstance("Windows-MY");
         keyStore.load(null, null);
     }
@@ -182,7 +227,7 @@ public class PdfSigner {
      * {
      * notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo de assinatura."
      * );
-     * String testeFilename = "C:\\temp\\assinado_local_primeira_assina.p7s";
+     * String testeFilename = fullFlePath("primeira_assinatura_");
      * Security.addProvider(new BouncyCastleProvider());
      * 
      * X509Certificate certificate = (X509Certificate)
@@ -235,7 +280,7 @@ public class PdfSigner {
      * //bSegunda = true;
      * notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo da segunda assinatura."
      * );
-     * testeFilename = "C:\\temp\\assinado_local_segunda_assina.p7s";
+     * testeFilename = fullFlePath("segunda_assinatura_");
      * //signedData = new CMSSignedData(Base64.decode(pdfToSign));
      * 
      * msg = signedData.getSignedContent(); // o pdf aparece no p7s.
@@ -249,7 +294,7 @@ public class PdfSigner {
      * }
      * catch(Exception e)
      * {
-     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado."
+     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado."
      * );
      * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addSigners]."
      * );
@@ -263,7 +308,7 @@ public class PdfSigner {
      * }
      * catch(Exception ex)
      * {
-     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado."
+     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X ] -Arquivo P7S não foi gerado."
      * );
      * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCertificates]."
      * );
@@ -277,7 +322,7 @@ public class PdfSigner {
      * }
      * catch(Exception ey)
      * {
-     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado."
+     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X ] -Arquivo P7S não foi gerado."
      * );
      * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCRLs]."
      * );
@@ -291,7 +336,7 @@ public class PdfSigner {
      * }
      * catch(Exception ez)
      * {
-     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado."
+     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado."
      * );
      * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addAttributeCertificates]."
      * );
@@ -308,7 +353,7 @@ public class PdfSigner {
      * }
      * catch (Exception e)
      * {
-     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado."
+     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado."
      * );
      * throw new Exception("genP7s: " + e.getMessage());
      * }
@@ -329,7 +374,7 @@ public class PdfSigner {
      * } catch (IOException e) {
      * 
      * e.printStackTrace(); // Or your logging mechanism
-     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo de teste P7S não foi gravado."
+     * notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo de teste P7S não foi gravado."
      * );
      * 
      * }
@@ -358,7 +403,8 @@ public class PdfSigner {
     public byte[] genP7s(byte[] pdfToSign, final String alias, byte[] originalPdf) throws Exception {
 
         notifyObservers("PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo de assinatura.");
-        String testeFilename = "C:\\temp\\assinado_local_primeira_assina.p7s";
+        String testeFilename = fullFlePath("primeira_assinatura_");
+
         Security.addProvider(new BouncyCastleProvider());
 
         X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
@@ -456,7 +502,7 @@ public class PdfSigner {
             if (signedData != null) {
                 notifyObservers(
                         "PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo da segunda assinatura.");
-                testeFilename = "C:\\temp\\assinado_local_segunda_assina.p7s";
+                testeFilename = fullFlePath("segunda_assinatura_");
                 // segunda assinatura.
                 // bSegunda = true;
 
@@ -472,7 +518,7 @@ public class PdfSigner {
                     signGen.addSigners(signers);
                 } catch (Exception e) {
                     notifyObservers(
-                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado.");
                     notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addSigners].");
                     throw new Exception("addSigners: " + e.getMessage());
                 }
@@ -482,7 +528,7 @@ public class PdfSigner {
                     signGen.addCertificates(storeCerts);
                 } catch (Exception ex) {
                     notifyObservers(
-                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado.");
                     notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCertificates].");
                     throw new Exception("addCertificates: " + ex.getMessage());
                 }
@@ -492,7 +538,7 @@ public class PdfSigner {
                     signGen.addCRLs(storeCRLs);
                 } catch (Exception ey) {
                     notifyObservers(
-                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado.");
                     notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addCRLs].");
                     throw new Exception("addCRLs: " + ey.getMessage());
                 }
@@ -502,7 +548,7 @@ public class PdfSigner {
                     signGen.addAttributeCertificates(storeAttrCerts);
                 } catch (Exception ez) {
                     notifyObservers(
-                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+                            "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado.");
                     notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [ERRO : addAttributeCertificates].");
                     throw new Exception("addAttributeCertificates: " + ez.getMessage());
                 }
@@ -513,7 +559,7 @@ public class PdfSigner {
                         "PdfSigner::genP7s - ROTINA ASSINATURA:: [INFO ⚠] Início do processo da primeira assinatura.");
             }
         } catch (Exception e) {
-            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo P7S não foi gerado.");
+            notifyObservers("\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo P7S não foi gerado.");
             throw new Exception("genP7s: " + e.getMessage());
         }
         // --------------------------------------------------------
@@ -533,7 +579,7 @@ public class PdfSigner {
 
             e.printStackTrace(); // Or your logging mechanism
             notifyObservers(
-                    "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION ❌] -Arquivo de teste P7S não foi gravado.");
+                    "\nPdfSigner::genP7s - ROTINA ASSINATURA:: [EXCEPTION X] -Arquivo de teste P7S não foi gravado.");
 
         }
         //
